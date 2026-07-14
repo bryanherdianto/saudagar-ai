@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+/*
+ * Saudagar.ai design system — an interpretation of the Wise design language
+ * (see DESIGN.md): vivid lime-green accent, sage-tinted canvas, near-black
+ * ink, generous 24px rounded cards, heavy display sans (Manrope) + Inter body.
+ */
+@theme {
+  /* Brand & accent */
+  --color-primary: #9fe870;
+  --color-primary-active: #cdffad;
+  --color-primary-neutral: #c5edab;
+  --color-primary-pale: #e2f6d5;
+  --color-on-primary: #0e0f0c;
+
+  /* Text */
+  --color-ink: #0e0f0c;
+  --color-ink-deep: #163300;
+  --color-body: #454745;
+  --color-mute: #868685;
+
+  /* Surface */
+  --color-canvas: #ffffff;
+  --color-canvas-soft: #e8ebe6;
+
+  /* Semantic */
+  --color-positive: #2ead4b;
+  --color-positive-deep: #054d28;
+  --color-warning: #ffd11a;
+  --color-warning-deep: #b86700;
+  --color-warning-content: #4a3b1c;
+  --color-negative: #d03238;
+  --color-negative-deep: #a72027;
+  --color-negative-bg: #320707;
+
+  /* Tertiary illustration accents */
+  --color-accent-orange: #ffc091;
+  --color-accent-cyan: #38c8ff;
+
+  /* Typography — Manrope for display (weight 800/900), Inter for everything */
+  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-manrope), var(--font-inter), system-ui, sans-serif;
+
+  /* Radius — brand's canonical 24px card/button pill */
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 28px;
+}
+
+html {
+  background-color: var(--color-canvas-soft);
+}
+
+body {
+  background-color: var(--color-canvas-soft);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Heavy display headings use Manrope at max weight — the brand's voice. */
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* Thin, elegant scrollbars inside scrollable panels. */
+.scroll-slim {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-mute) transparent;
+}
+.scroll-slim::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.scroll-slim::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary-neutral);
+  border-radius: 9999px;
+}
