@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AuthControls } from "./AuthControls";
 
 const NAV = [
   { href: "/", label: "Beranda" },
@@ -16,7 +17,9 @@ export function SiteHeader() {
         <Link href="/" className="flex items-center gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.svg" alt="Saudagar.ai" className="h-8 w-auto" />
-          <span className="font-display ml-1 text-lg text-ink">Saudagar.ai</span>
+          <span className="font-display ml-1 text-lg text-ink">
+            Saudagar.ai
+          </span>
         </Link>
 
         <nav className="flex items-center gap-6">
@@ -29,12 +32,7 @@ export function SiteHeader() {
               {item.label}
             </Link>
           ))}
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-primary-active"
-          >
-            Masuk Dashboard
-          </Link>
+          <AuthControls />
         </nav>
       </div>
     </header>

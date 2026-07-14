@@ -44,7 +44,9 @@ export default function TermsOfUse() {
         <p className="text-xs font-semibold uppercase tracking-wider text-mute">
           Legal
         </p>
-        <h1 className="mt-2 font-display text-4xl text-ink">Syarat &amp; Ketentuan</h1>
+        <h1 className="mt-2 font-display text-4xl text-ink">
+          Syarat &amp; Ketentuan
+        </h1>
         <p className="mt-3 text-sm text-mute">
           Terakhir diperbarui: 14 Juli 2026
         </p>

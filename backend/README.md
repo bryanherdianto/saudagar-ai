@@ -26,7 +26,7 @@ source venv/Scripts/activate
 pip install -r requirements.txt
 
 # 3. configure env
-cp .env.example .env        # then edit .env and add GEMINI_API_KEY (optional)
+cp .env.example .env        # then edit .env and add GEMINI_API_KEY
 
 # 4. run
 uvicorn app.main:app --reload --port 8000
@@ -63,7 +63,7 @@ app/
 
 - **RAG** (`ai/rag.py`): every assistant/CS turn retrieves the most relevant
   catalog + store-rule snippets and injects them into the prompt, so the model
-  answers from *this* store's data instead of hallucinating.
+  answers from _this_ store's data instead of hallucinating.
 - **MCP-style tools** (`ai/tools.py`): the model can only change data through a
   small, audited tool set (record a sale, adjust stock, add a product, …). The
   agent loop in `ai/agent.py` executes those tool calls against the live DB and
@@ -71,14 +71,14 @@ app/
 
 ## Key endpoints
 
-| Method | Path | Purpose |
-|---|---|---|
-| POST | `/api/chat` | NL bookkeeping/stock assistant (the WhatsApp bot brain) |
-| POST | `/api/cs` | Auto customer-service reply + upsell suggestion |
-| GET  | `/api/insights?days=7` | Dashboard analytics narrative + recommendations |
-| POST | `/api/catalog/generate` | Multi-language product copywriting |
-| GET/POST/PATCH/DELETE | `/api/products` | Catalog & stock CRUD |
-| GET/POST | `/api/transactions` | Income/expense ledger |
+| Method                | Path                    | Purpose                                                 |
+| --------------------- | ----------------------- | ------------------------------------------------------- |
+| POST                  | `/api/chat`             | NL bookkeeping/stock assistant (the WhatsApp bot brain) |
+| POST                  | `/api/cs`               | Auto customer-service reply + upsell suggestion         |
+| GET                   | `/api/insights?days=7`  | Dashboard analytics narrative + recommendations         |
+| POST                  | `/api/catalog/generate` | Multi-language product copywriting                      |
+| GET/POST/PATCH/DELETE | `/api/products`         | Catalog & stock CRUD                                    |
+| GET/POST              | `/api/transactions`     | Income/expense ledger                                   |
 
 ## Configuration
 

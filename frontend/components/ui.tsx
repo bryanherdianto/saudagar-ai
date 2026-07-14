@@ -8,7 +8,8 @@ const buttonStyles: Record<ButtonVariant, string> = {
   // Lime-green CTA pill — the brand's conversion signature.
   primary:
     "bg-primary text-on-primary hover:bg-primary-active disabled:opacity-50",
-  secondary: "bg-canvas-soft text-ink hover:bg-primary-pale disabled:opacity-50",
+  secondary:
+    "bg-canvas-soft text-ink hover:bg-primary-pale disabled:opacity-50",
   tertiary:
     "bg-canvas text-ink border border-ink hover:bg-canvas-soft disabled:opacity-50",
   dark: "bg-ink text-primary hover:bg-ink/90 disabled:opacity-50",

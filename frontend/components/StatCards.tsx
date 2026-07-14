@@ -24,7 +24,9 @@ function Stat({
   return (
     <div className={`rounded-xl p-5 ${toneClass}`}>
       <div className="mb-3 flex items-center justify-between">
-        <span className="text-sm font-semibold uppercase opacity-70">{label}</span>
+        <span className="text-sm font-semibold uppercase opacity-70">
+          {label}
+        </span>
         <span className="opacity-70">{icon}</span>
       </div>
       <p className="font-display text-3xl leading-none">{value}</p>

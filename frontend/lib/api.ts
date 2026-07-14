@@ -34,7 +34,8 @@ export const api = {
   listTransactions: (limit = 50) =>
     request<Transaction[]>(`/api/transactions?limit=${limit}`),
 
-  insights: (days = 7) => request<InsightResponse>(`/api/insights?days=${days}`),
+  insights: (days = 7) =>
+    request<InsightResponse>(`/api/insights?days=${days}`),
 
   chat: (message: string, history: ChatMessage[] = []) =>
     request<ChatResponse>("/api/chat", {
