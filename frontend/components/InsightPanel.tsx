@@ -24,14 +24,14 @@ export function InsightPanel({ insight }: { insight: InsightResponse }) {
       <h2 className="font-display text-3xl leading-tight text-primary sm:text-4xl">
         {headline}
       </h2>
-      <p className="mt-4 max-w-2xl text-base leading-relaxed text-canvas-soft">
+      <p className="mt-4 text-base leading-relaxed text-canvas-soft">
         {narrative}
       </p>
 
       {recommendations.length > 0 && (
         <div className="mt-6">
-          <p className="mb-2 text-sm font-semibold text-primary/80">
-            Rekomendasi untukmu
+          <p className="mb-2 text-sm font-semibold uppercase text-primary/80">
+            Rekomendasi
           </p>
           <ul className="space-y-2">
             {recommendations.map((rec, i) => (
@@ -53,7 +53,7 @@ export function InsightPanel({ insight }: { insight: InsightResponse }) {
         <div className="mt-6 flex flex-wrap gap-2">
           {metrics.top_products.slice(0, 3).map((p) => (
             <Badge key={p.name} tone="positive">
-              🔥 {p.name} · {rupiah(p.revenue)}
+              {p.name} · {rupiah(p.revenue)}
             </Badge>
           ))}
         </div>

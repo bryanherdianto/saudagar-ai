@@ -60,9 +60,10 @@ def run_assistant(
     llm_with_tools = llm.bind_tools(tools)
 
     context = retrieve_context(session, message)
+    # Gemini only accepts a single system message (at position 0), so combine
+    # the base prompt and the retrieved store context into one.
     messages = [
-        SystemMessage(content=SYSTEM_PROMPT),
-        SystemMessage(content=f"KONTEKS TOKO (hasil RAG):\n{context}"),
+        SystemMessage(content=f"{SYSTEM_PROMPT}\n\nKONTEKS TOKO (hasil RAG):\n{context}"),
     ]
     for m in history[-8:]:
         if m.role == "user":

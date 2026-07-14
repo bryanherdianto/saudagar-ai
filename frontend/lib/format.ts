@@ -15,6 +15,16 @@ export function compactRupiah(value: number): string {
   return `Rp${Math.round(value)}`;
 }
 
+export function dateTime(iso: string): string {
+  return new Intl.DateTimeFormat("id-ID", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(iso));
+}
+
 export function relativeTime(iso: string): string {
   const then = new Date(iso).getTime();
   const diffMs = Date.now() - then;

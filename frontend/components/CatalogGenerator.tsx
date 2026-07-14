@@ -66,7 +66,9 @@ export function CatalogGenerator() {
           <p className="font-display text-lg leading-none text-ink">
             Katalog Multi-Bahasa
           </p>
-          <p className="text-xs text-mute">Deskripsi produk siap tempel ke marketplace</p>
+          <p className="text-xs text-mute pt-1">
+            Deskripsi produk siap tempel ke marketplace
+          </p>
         </div>
       </div>
 
@@ -74,13 +76,13 @@ export function CatalogGenerator() {
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Nama produk, mis. Keripik Singkong Pedas"
+          placeholder="Nama produk"
           className="w-full rounded-md border border-ink/20 bg-canvas px-4 py-3 text-sm text-ink outline-none placeholder:text-mute focus:border-ink"
         />
         <textarea
           value={details}
           onChange={(e) => setDetails(e.target.value)}
-          placeholder="Detail / keunggulan (opsional): pedas, renyah, kemasan 250gr…"
+          placeholder="Detail: pedas, renyah, kemasan 250 gram, dll."
           rows={2}
           className="w-full resize-none rounded-md border border-ink/20 bg-canvas px-4 py-3 text-sm text-ink outline-none placeholder:text-mute focus:border-ink"
         />
@@ -107,7 +109,7 @@ export function CatalogGenerator() {
           disabled={loading || !name.trim() || langs.length === 0}
           className="w-full"
         >
-          {loading ? "Membuat deskripsi…" : "Buat Deskripsi ✨"}
+          {loading ? "Membuat deskripsi…" : "Buat Deskripsi"}
         </Button>
       </div>
 
@@ -123,7 +125,7 @@ export function CatalogGenerator() {
                   onClick={() => copy(item)}
                   className="text-xs font-semibold text-positive-deep hover:underline"
                 >
-                  {copied === item.language ? "Tersalin ✓" : "Salin"}
+                  {copied === item.language ? "Tersalin" : "Salin"}
                 </button>
               </div>
               <p className="font-semibold text-ink">{item.title}</p>

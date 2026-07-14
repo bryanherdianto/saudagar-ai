@@ -1,5 +1,5 @@
 import type { Transaction } from "@/lib/types";
-import { rupiah, relativeTime } from "@/lib/format";
+import { rupiah, dateTime } from "@/lib/format";
 import { ArrowDownIcon, ArrowUpIcon } from "./icons";
 
 export function TransactionsTable({ transactions }: { transactions: Transaction[] }) {
@@ -13,8 +13,7 @@ export function TransactionsTable({ transactions }: { transactions: Transaction[
 
   return (
     <div className="overflow-hidden rounded-xl bg-canvas">
-      <div className="scroll-slim max-h-[420px] overflow-y-auto">
-        <table className="w-full text-left text-sm">
+      <table className="w-full text-left text-sm">
           <thead className="sticky top-0 bg-canvas-soft text-xs uppercase tracking-wide text-mute">
             <tr>
               <th className="px-5 py-3 font-semibold">Transaksi</th>
@@ -53,7 +52,6 @@ export function TransactionsTable({ transactions }: { transactions: Transaction[
                         {t.quantity > 0 && (
                           <p className="text-xs text-mute">
                             {t.quantity} {t.unit}
-                            {t.source === "assistant" && " · via asisten"}
                           </p>
                         )}
                       </div>
@@ -69,14 +67,13 @@ export function TransactionsTable({ transactions }: { transactions: Transaction[
                     {rupiah(t.amount)}
                   </td>
                   <td className="px-5 py-3 text-right text-xs text-mute">
-                    {relativeTime(t.created_at)}
+                    {dateTime(t.created_at)}
                   </td>
                 </tr>
               );
             })}
           </tbody>
-        </table>
-      </div>
+      </table>
     </div>
   );
 }

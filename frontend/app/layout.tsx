@@ -16,9 +16,9 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Saudagar.ai — Asisten Usaha Dagang Pintar",
+  title: "Saudagar.ai | Asisten Usaha Dagang Pintar",
   description:
-    "Karyawan digital untuk UMKM: catat keuangan & stok lewat obrolan, layani pelanggan otomatis, dan pahami bisnismu dengan insight AI.",
+    "Karyawan digital untuk UMKM: catat keuangan & stok lewat obrolan dan pahami bisnismu dengan insight AI.",
 };
 
 export default function RootLayout({

@@ -13,8 +13,7 @@ export function ProductsTable({ products }: { products: Product[] }) {
 
   return (
     <div className="overflow-hidden rounded-xl bg-canvas">
-      <div className="scroll-slim max-h-[420px] overflow-y-auto">
-        <table className="w-full text-left text-sm">
+      <table className="w-full text-left text-sm">
           <thead className="sticky top-0 bg-canvas-soft text-xs uppercase tracking-wide text-mute">
             <tr>
               <th className="px-5 py-3 font-semibold">Produk</th>
@@ -53,8 +52,7 @@ export function ProductsTable({ products }: { products: Product[] }) {
               );
             })}
           </tbody>
-        </table>
-      </div>
+      </table>
     </div>
   );
 }

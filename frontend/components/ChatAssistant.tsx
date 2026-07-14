@@ -21,7 +21,7 @@ export function ChatAssistant({ onMutate }: { onMutate?: () => void }) {
     {
       role: "assistant",
       content:
-        "Halo! Saya Saudagar.ai, karyawan digitalmu. Cerita saja transaksinya, nanti saya catat. Contoh: “hari ini laku 15 porsi nasi goreng ayam, terus beli telur 2 kg 55 ribu”.",
+        'Halo! Saya Saudagar.ai, karyawan digitalmu. Cerita saja transaksinya, nanti saya catat. Contoh: "Hari ini laku 15 porsi nasi goreng ayam, lalu beli telur 2 kg 55 ribu."',
     },
   ]);
   const [input, setInput] = useState("");
@@ -70,7 +70,7 @@ export function ChatAssistant({ onMutate }: { onMutate?: () => void }) {
   }
 
   return (
-    <div className="flex h-full min-h-[520px] flex-col rounded-xl bg-canvas">
+    <div className="flex h-full min-h-130 flex-col rounded-xl bg-canvas">
       <div className="flex items-center gap-3 border-b border-canvas-soft px-6 py-4">
         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-on-primary">
           <ChatIcon className="h-5 w-5" />
@@ -79,7 +79,9 @@ export function ChatAssistant({ onMutate }: { onMutate?: () => void }) {
           <p className="font-display text-lg leading-none text-ink">
             Asisten Saudagar
           </p>
-          <p className="text-xs text-mute">Catat keuangan & stok lewat obrolan</p>
+          <p className="text-xs text-mute pt-1">
+            Catat keuangan & stok lewat obrolan
+          </p>
         </div>
       </div>
 
@@ -107,7 +109,6 @@ export function ChatAssistant({ onMutate }: { onMutate?: () => void }) {
                       key={j}
                       className="flex items-start gap-1.5 text-xs text-positive-deep"
                     >
-                      <span>✓</span>
                       {a}
                     </p>
                   ))}
@@ -121,7 +122,9 @@ export function ChatAssistant({ onMutate }: { onMutate?: () => void }) {
             <div className="rounded-xl bg-canvas-soft px-4 py-3 text-sm text-mute">
               <span className="inline-flex gap-1">
                 <span className="animate-bounce">●</span>
-                <span className="animate-bounce [animation-delay:0.15s]">●</span>
+                <span className="animate-bounce [animation-delay:0.15s]">
+                  ●
+                </span>
                 <span className="animate-bounce [animation-delay:0.3s]">●</span>
               </span>
             </div>
@@ -152,7 +155,7 @@ export function ChatAssistant({ onMutate }: { onMutate?: () => void }) {
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Tulis pesan… mis. “laku 10 es teh manis”"
+            placeholder="Tulis pesan..."
             className="flex-1 rounded-md border border-ink/20 bg-canvas px-4 py-3 text-sm text-ink outline-none placeholder:text-mute focus:border-ink"
           />
           <Button type="submit" disabled={loading || !input.trim()}>

@@ -24,7 +24,7 @@ function Stat({
   return (
     <div className={`rounded-xl p-5 ${toneClass}`}>
       <div className="mb-3 flex items-center justify-between">
-        <span className="text-sm font-semibold opacity-70">{label}</span>
+        <span className="text-sm font-semibold uppercase opacity-70">{label}</span>
         <span className="opacity-70">{icon}</span>
       </div>
       <p className="font-display text-3xl leading-none">{value}</p>
@@ -52,7 +52,7 @@ export function StatCards({ metrics }: { metrics: InsightMetrics }) {
       <Stat
         label="Laba Bersih"
         value={rupiah(metrics.profit)}
-        sub={metrics.profit >= 0 ? "Untung 🎉" : "Perlu perhatian"}
+        sub={metrics.profit >= 0 ? "Untung" : "Perlu perhatian"}
         icon={<ReceiptIcon className="h-5 w-5" />}
         tone="dark"
       />
