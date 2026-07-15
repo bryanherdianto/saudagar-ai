@@ -2,8 +2,8 @@
 
 Following the Model Context Protocol philosophy, the LLM never touches the
 database directly — it can only act through this small, audited set of tools.
-Each tool is bound to a live SQLModel `Session` via a closure and returns a
-plain string the model can read back.
+Each tool is bound to a live SQLModel `Session` and a `store_id` via a
+closure and returns a plain string the model can read back.
 
 We build them with LangChain's `StructuredTool` so they can be passed to
 `ChatGoogleGenerativeAI.bind_tools()` for native function calling.
@@ -60,13 +60,13 @@ class SummaryArgs(BaseModel):
     days: int = Field(default=7, description="Rentang hari untuk ringkasan penjualan")
 
 
-def build_tools(session: Session) -> list[Any]:
-    """Create the tool set bound to a database session."""
+def build_tools(session: Session, store_id: int) -> list[Any]:
+    """Create the tool set bound to a database session and a store scope."""
     from langchain_core.tools import StructuredTool
 
     def _record_sale(product_name: str, quantity: float, amount: float | None = None, unit: str = "") -> str:
         tx = services.record_sale(
-            session, product_name, quantity, amount, unit, source="assistant"
+            session, store_id, product_name, quantity, amount, unit, source="assistant"
         )
         return (
             f"Tercatat penjualan {tx.quantity:g} {tx.unit} {tx.product_name} "
@@ -82,14 +82,14 @@ def build_tools(session: Session) -> list[Any]:
         description: str = "",
     ) -> str:
         tx = services.record_expense(
-            session, amount, category, description, product_name, quantity, unit,
-            source="assistant",
+            session, store_id, amount, category, description, product_name,
+            quantity, unit, source="assistant",
         )
         extra = f" untuk {tx.quantity:g} {tx.unit} {tx.product_name}" if tx.product_name else ""
         return f"Tercatat pengeluaran '{tx.category}'{extra} senilai Rp{tx.amount:,.0f}."
 
     def _check_stock(product_name: str) -> str:
-        product = services.find_product(session, product_name)
+        product = services.find_product(session, product_name, store_id)
         if not product:
             return f"Produk '{product_name}' tidak ditemukan di katalog."
         status = "MENIPIS" if product.stock <= product.low_stock_threshold else "aman"
@@ -99,20 +99,22 @@ def build_tools(session: Session) -> list[Any]:
         )
 
     def _set_stock(product_name: str, stock: float) -> str:
-        product = services.set_stock(session, product_name, stock)
+        product = services.set_stock(session, store_id, product_name, stock)
         if not product:
             return f"Produk '{product_name}' tidak ditemukan."
         return f"Stok {product.name} diperbarui menjadi {product.stock:g} {product.unit}."
 
     def _add_product(name: str, price: float = 0.0, stock: float = 0.0, unit: str = "pcs", category: str = "") -> str:
-        product = services.upsert_product(session, name, price, stock, unit, category)
+        product = services.upsert_product(
+            session, store_id, name, price, stock, unit, category
+        )
         return (
             f"Produk '{product.name}' disimpan: harga Rp{product.price:,.0f}/{product.unit}, "
             f"stok {product.stock:g}."
         )
 
     def _sales_summary(days: int = 7) -> str:
-        s = services.sales_summary(session, days)
+        s = services.sales_summary(session, store_id, days)
         top = ", ".join(f"{p['name']} (Rp{p['revenue']:,.0f})" for p in s["top_products"]) or "-"
         low = ", ".join(f"{p['name']} ({p['stock']:g})" for p in s["low_stock"]) or "tidak ada"
         return (

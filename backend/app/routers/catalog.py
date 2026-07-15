@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter
-from fastapi import File, Form, UploadFile
+from fastapi import APIRouter, Depends, File, Form, UploadFile
 
 from app.ai.analyst import generate_catalog
+from app.auth import AuthContext, get_ctx
 from app.config import settings
 from app.schemas import CatalogRequest, CatalogResponse
 
@@ -13,13 +13,14 @@ router = APIRouter(prefix="/api/catalog", tags=["catalog"])
 
 
 @router.post("/generate", response_model=CatalogResponse)
-def generate(body: CatalogRequest) -> CatalogResponse:
+def generate(body: CatalogRequest, ctx: AuthContext = Depends(get_ctx)) -> CatalogResponse:
     items = generate_catalog(body.product_name, body.details, body.languages, body.tone)
     return CatalogResponse(items=items, ai_enabled=settings.ai_enabled)
 
 
 @router.post("/generate-with-image", response_model=CatalogResponse)
 async def generate_with_image(
+    ctx: AuthContext = Depends(get_ctx),
     product_name: str = Form(...),
     details: str = Form(""),
     languages: str = Form("id,en"),

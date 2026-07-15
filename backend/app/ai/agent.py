@@ -6,18 +6,22 @@ results back, and repeat until the model produces a final answer.
 
 When no API key is configured it degrades to a lightweight rule-based parser
 so the "record a sale by chatting" flow still works in a demo.
+
+`store_id` is threaded through every tool call so two stores' data is never
+mixed when the AI is acting.
 """
 
 from __future__ import annotations
 
 import re
 
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from app import services
 from app.ai.llm import get_llm
 from app.ai.rag import retrieve_context
 from app.ai.tools import build_tools
+from app.models import Product
 from app.schemas import ChatMessage
 
 SYSTEM_PROMPT = """Kamu adalah "Saudagar.ai", asisten digital untuk pemilik UMKM di Indonesia.
@@ -39,13 +43,16 @@ MAX_TOOL_ITERATIONS = 5
 
 
 def run_assistant(
-    session: Session, message: str, history: list[ChatMessage] | None = None
+    session: Session,
+    store_id: int,
+    message: str,
+    history: list[ChatMessage] | None = None,
 ) -> tuple[str, list[str], bool]:
     """Return (reply, actions_taken, ai_enabled)."""
     history = history or []
     llm = get_llm()
     if llm is None:
-        reply, actions = _rule_based_assistant(session, message)
+        reply, actions = _rule_based_assistant(session, store_id, message)
         return reply, actions, False
 
     from langchain_core.messages import (
@@ -55,14 +62,14 @@ def run_assistant(
         ToolMessage,
     )
 
-    tools = build_tools(session)
+    tools = build_tools(session, store_id)
     tools_by_name = {t.name: t for t in tools}
     llm_with_tools = llm.bind_tools(tools)
 
-    context = retrieve_context(session, message)
+    context = retrieve_context(session, store_id, message)
     # Gemini only accepts a single system message (at position 0), so combine
     # the base prompt and the retrieved store context into one.
-    messages = [
+    messages: list = [
         SystemMessage(content=f"{SYSTEM_PROMPT}\n\nKONTEKS TOKO (hasil RAG):\n{context}"),
     ]
     for m in history[-8:]:
@@ -91,7 +98,15 @@ def run_assistant(
                 except Exception as exc:  # surface tool errors back to the model
                     result = f"Gagal menjalankan tool: {exc}"
             actions.append(result)
-            messages.append(ToolMessage(content=str(result), tool_call_id=call["id"]))
+            # `name` is required: Gemini maps each ToolMessage to a
+            # function_response and rejects the request if its name is empty.
+            messages.append(
+                ToolMessage(
+                    content=str(result),
+                    tool_call_id=call["id"],
+                    name=call["name"],
+                )
+            )
 
     # Ran out of iterations — return a best-effort summary of what we did.
     fallback = "Beberapa aksi sudah dijalankan:\n" + "\n".join(f"- {a}" for a in actions)
@@ -129,17 +144,18 @@ def _parse_amount(text: str) -> float | None:
     return None
 
 
-def _rule_based_assistant(session: Session, message: str) -> tuple[str, list[str]]:
+def _rule_based_assistant(
+    session: Session, store_id: int, message: str
+) -> tuple[str, list[str]]:
     """A deterministic parser used when Gemini is not configured."""
     text = message.lower()
     actions: list[str] = []
 
     # Stock check intent — try to match a known product name in the message.
     if any(w in text for w in ("stok", "sisa", "ada berapa")):
-        from sqlmodel import select
-        from app.models import Product
-
-        for product in session.exec(select(Product)).all():
+        for product in session.exec(
+            select(Product).where(Product.store_id == store_id)
+        ).all():
             if product.name.lower() in text:
                 status = "menipis" if product.stock <= product.low_stock_threshold else "aman"
                 return (
@@ -169,8 +185,8 @@ def _rule_based_assistant(session: Session, message: str) -> tuple[str, list[str
 
     if any(w in text for w in _EXPENSE_KEYWORDS):
         tx = services.record_expense(
-            session, amount or 0.0, product_name=product_guess, quantity=quantity,
-            unit=unit, source="assistant",
+            session, store_id, amount or 0.0, product_name=product_guess,
+            quantity=quantity, unit=unit, source="assistant",
         )
         msg = f"Oke, dicatat pengeluaran Rp{tx.amount:,.0f}"
         msg += f" untuk {quantity:g} {unit} {product_guess}." if product_guess else "."
@@ -179,7 +195,7 @@ def _rule_based_assistant(session: Session, message: str) -> tuple[str, list[str
 
     if any(w in text for w in _INCOME_KEYWORDS) or qty_match:
         tx = services.record_sale(
-            session, product_guess, quantity, amount, unit, source="assistant",
+            session, store_id, product_guess, quantity, amount, unit, source="assistant",
         )
         msg = f"Sip! Dicatat penjualan {quantity:g} {tx.unit} {tx.product_name} senilai Rp{tx.amount:,.0f}."
         actions.append(msg)

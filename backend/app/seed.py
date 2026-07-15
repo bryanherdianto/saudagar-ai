@@ -1,7 +1,11 @@
-"""Seed the database with a demo store, catalog, and a few transactions.
+"""Seed demo data for first-time onboarding.
 
-Run once on startup if the database is empty so the dashboard has data to show.
-Idempotent: does nothing when a store already exists.
+Run once on startup only when:
+  - auth is disabled (dev/demo mode), AND
+  - the bootstrap user has no store yet.
+
+When auth is enabled (CLERK_ISSUER set), seeding per-user is left to an
+explicit onboarding endpoint — we never auto-create stores for real users.
 """
 
 from __future__ import annotations
@@ -10,7 +14,9 @@ from datetime import timedelta
 
 from sqlmodel import Session, select
 
-from app.models import Product, Store, Transaction
+from app.config import settings
+from app.database import engine
+from app.models import Product, Store, Transaction, User
 from app.models import _utcnow
 
 
@@ -26,16 +32,38 @@ DEMO_PRODUCTS = [
     ("Kerupuk", "Pelengkap", "bungkus", 2000, 1200, 4, 10),
 ]
 
+DEMO_TX = [
+    ("income", "penjualan", "Nasi Goreng Ayam", 15, 18000, 1),
+    ("income", "penjualan", "Es Teh Manis", 20, 5000, 1),
+    ("expense", "pembelian stok", "Telur Ayam", 2, 55000, 2),
+    ("income", "penjualan", "Mie Goreng Spesial", 10, 20000, 3),
+    ("income", "penjualan", "Es Jeruk", 12, 7000, 3),
+    ("expense", "operasional", "", 0, 25000, 4),
+    ("income", "penjualan", "Nasi Goreng Ayam", 18, 18000, 5),
+]
+
 
 def seed_if_empty() -> None:
-    from app.database import engine
+    """Seed the demo store for the bootstrap user (demo mode only)."""
+    if settings.auth_enabled:
+        # Never auto-seed real users — they onboard through the API.
+        return
 
     with Session(engine) as session:
-        existing = session.exec(select(Store)).first()
-        if existing:
+        bootstrap = session.exec(
+            select(User).where(User.clerk_user_id == "bootstrap")
+        ).first()
+        if bootstrap is None:
+            return
+
+        existing_store = session.exec(
+            select(Store).where(Store.owner_id == bootstrap.id)
+        ).first()
+        if existing_store is not None:
             return
 
         store = Store(
+            owner_id=bootstrap.id,
             name="Warung Bu Sari",
             owner_name="Bu Sari",
             category="Warung Makan",
@@ -48,10 +76,13 @@ def seed_if_empty() -> None:
             ),
         )
         session.add(store)
+        session.commit()
+        session.refresh(store)
 
         products: list[Product] = []
         for name, cat, unit, price, cost, stock, thr in DEMO_PRODUCTS:
             p = Product(
+                store_id=store.id,
                 name=name, category=cat, unit=unit, price=price, cost=cost,
                 stock=stock, low_stock_threshold=thr,
                 description=f"{name} khas {store.name}.",
@@ -64,20 +95,11 @@ def seed_if_empty() -> None:
 
         by_name = {p.name: p for p in products}
 
-        # A handful of transactions spread over the past week.
-        demo_tx = [
-            ("income", "penjualan", "Nasi Goreng Ayam", 15, 18000, 1),
-            ("income", "penjualan", "Es Teh Manis", 20, 5000, 1),
-            ("expense", "pembelian stok", "Telur Ayam", 2, 55000, 2),
-            ("income", "penjualan", "Mie Goreng Spesial", 10, 20000, 3),
-            ("income", "penjualan", "Es Jeruk", 12, 7000, 3),
-            ("expense", "operasional", "", 0, 25000, 4),
-            ("income", "penjualan", "Nasi Goreng Ayam", 18, 18000, 5),
-        ]
-        for kind, category, pname, qty, total, days_ago in demo_tx:
+        for kind, category, pname, qty, total, days_ago in DEMO_TX:
             product = by_name.get(pname)
             session.add(
                 Transaction(
+                    store_id=store.id,
                     kind=kind,
                     category=category,
                     description=(f"{category.title()} {pname}").strip(),

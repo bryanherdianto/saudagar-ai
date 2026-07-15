@@ -2,6 +2,9 @@
 
 Keeping the logic here (rather than inside route handlers or tool wrappers)
 means the AI agent and the dashboard mutate data through the exact same paths.
+
+All functions are store-scoped: callers must pass `store_id` so two merchants
+never share or mutate each other's data.
 """
 
 from __future__ import annotations
@@ -13,12 +16,14 @@ from sqlmodel import Session, select
 from app.models import Product, Transaction
 
 
-def find_product(session: Session, name: str) -> Product | None:
-    """Case-insensitive best-effort product lookup by name."""
+def find_product(session: Session, name: str, store_id: int) -> Product | None:
+    """Case-insensitive best-effort product lookup by name, scoped to a store."""
     if not name:
         return None
     name_l = name.strip().lower()
-    products = session.exec(select(Product)).all()
+    products = session.exec(
+        select(Product).where(Product.store_id == store_id)
+    ).all()
     # Exact match first, then substring either direction.
     for p in products:
         if p.name.lower() == name_l:
@@ -31,6 +36,7 @@ def find_product(session: Session, name: str) -> Product | None:
 
 def record_sale(
     session: Session,
+    store_id: int,
     product_name: str,
     quantity: float,
     amount: float | None = None,
@@ -39,7 +45,7 @@ def record_sale(
     source: str = "manual",
 ) -> Transaction:
     """Record an income transaction and decrement stock if the product exists."""
-    product = find_product(session, product_name)
+    product = find_product(session, product_name, store_id)
     resolved_unit = unit
     if product:
         if amount is None:
@@ -50,6 +56,7 @@ def record_sale(
         session.add(product)
 
     tx = Transaction(
+        store_id=store_id,
         kind="income",
         category="penjualan",
         description=description or f"Penjualan {product_name}".strip(),
@@ -68,6 +75,7 @@ def record_sale(
 
 def record_expense(
     session: Session,
+    store_id: int,
     amount: float,
     category: str = "pembelian stok",
     description: str = "",
@@ -78,7 +86,7 @@ def record_expense(
     source: str = "manual",
 ) -> Transaction:
     """Record an expense; optionally increment stock for a purchased product."""
-    product = find_product(session, product_name) if product_name else None
+    product = find_product(session, product_name, store_id) if product_name else None
     resolved_unit = unit
     if product and add_to_stock and quantity:
         product.stock += quantity
@@ -87,6 +95,7 @@ def record_expense(
         session.add(product)
 
     tx = Transaction(
+        store_id=store_id,
         kind="expense",
         category=category,
         description=description or (f"Pembelian {product_name}".strip() if product_name else "Pengeluaran"),
@@ -103,8 +112,8 @@ def record_expense(
     return tx
 
 
-def set_stock(session: Session, product_name: str, stock: float) -> Product | None:
-    product = find_product(session, product_name)
+def set_stock(session: Session, store_id: int, product_name: str, stock: float) -> Product | None:
+    product = find_product(session, product_name, store_id)
     if not product:
         return None
     product.stock = max(0.0, stock)
@@ -117,6 +126,7 @@ def set_stock(session: Session, product_name: str, stock: float) -> Product | No
 
 def upsert_product(
     session: Session,
+    store_id: int,
     name: str,
     price: float = 0.0,
     stock: float = 0.0,
@@ -124,8 +134,10 @@ def upsert_product(
     category: str = "",
     cost: float = 0.0,
     description: str = "",
+    sku: str | None = None,
+    low_stock_threshold: float = 5.0,
 ) -> Product:
-    product = find_product(session, name)
+    product = find_product(session, name, store_id)
     if product:
         product.price = price or product.price
         product.stock = stock if stock else product.stock
@@ -133,9 +145,13 @@ def upsert_product(
         product.category = category or product.category
         product.cost = cost or product.cost
         product.description = description or product.description
+        if sku is not None:
+            product.sku = sku
+        product.low_stock_threshold = low_stock_threshold or product.low_stock_threshold
         product.updated_at = datetime.now(timezone.utc)
     else:
         product = Product(
+            store_id=store_id,
             name=name,
             price=price,
             stock=stock,
@@ -143,6 +159,8 @@ def upsert_product(
             category=category,
             cost=cost,
             description=description,
+            sku=sku,
+            low_stock_threshold=low_stock_threshold,
         )
     session.add(product)
     session.commit()
@@ -150,19 +168,24 @@ def upsert_product(
     return product
 
 
-def low_stock_products(session: Session) -> list[Product]:
+def low_stock_products(session: Session, store_id: int) -> list[Product]:
     return [
         p
-        for p in session.exec(select(Product)).all()
+        for p in session.exec(
+            select(Product).where(Product.store_id == store_id)
+        ).all()
         if p.stock <= p.low_stock_threshold
     ]
 
 
-def sales_summary(session: Session, days: int = 7) -> dict:
-    """Aggregate income/expense over the trailing `days` window."""
+def sales_summary(session: Session, store_id: int, days: int = 7) -> dict:
+    """Aggregate income/expense over the trailing `days` window, scoped to a store."""
     since = datetime.now(timezone.utc) - timedelta(days=days)
     txs = session.exec(
-        select(Transaction).where(Transaction.created_at >= since)
+        select(Transaction).where(
+            Transaction.store_id == store_id,
+            Transaction.created_at >= since,
+        )
     ).all()
 
     income = sum(t.amount for t in txs if t.kind == "income")
@@ -184,6 +207,6 @@ def sales_summary(session: Session, days: int = 7) -> dict:
         "top_products": [{"name": n, "revenue": round(v, 2)} for n, v in top],
         "low_stock": [
             {"name": p.name, "stock": p.stock, "unit": p.unit}
-            for p in low_stock_products(session)
+            for p in low_stock_products(session, store_id)
         ],
     }

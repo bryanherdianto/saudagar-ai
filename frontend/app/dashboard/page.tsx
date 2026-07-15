@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useAuth } from "@clerk/nextjs";
 import { api } from "@/lib/api";
-import type { InsightResponse, Product, Transaction } from "@/lib/types";
+import type { InsightResponse, Product, Store, Transaction } from "@/lib/types";
 import { Sidebar } from "@/components/Sidebar";
 import { StatCards } from "@/components/StatCards";
 import { InsightPanel } from "@/components/InsightPanel";
@@ -10,7 +11,11 @@ import { ChatAssistant } from "@/components/ChatAssistant";
 import { CatalogGenerator } from "@/components/CatalogGenerator";
 import { TransactionsTable } from "@/components/TransactionsTable";
 import { ProductsTable } from "@/components/ProductsTable";
+import { StoreOnboarding } from "@/components/StoreOnboarding";
+import { AuthControls } from "@/components/AuthControls";
 import { SectionTitle } from "@/components/ui";
+
+type StoreState = "loading" | "none" | "ready";
 
 export default function Dashboard() {
   const [insight, setInsight] = useState<InsightResponse | null>(null);
@@ -18,9 +23,26 @@ export default function Dashboard() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [offline, setOffline] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [store, setStore] = useState<Store | null>(null);
+  const [storeState, setStoreState] = useState<StoreState>("loading");
+  const { isLoaded, isSignedIn } = useAuth();
 
   const loadData = useCallback(async () => {
     try {
+      const status = await api.getStore();
+      if (!status.has_store || !status.store) {
+        setStore(null);
+        setStoreState("none");
+        setInsight(null);
+        setProducts([]);
+        setTransactions([]);
+        setOffline(false);
+        setLoading(false);
+        return;
+      }
+      setStore(status.store);
+      setStoreState("ready");
+
       const [ins, prods, txs] = await Promise.all([
         api.insights(7),
         api.listProducts(),
@@ -38,8 +60,40 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
+    // Wait for Clerk to hydrate before fetching — otherwise the request fires
+    // without a session token and the backend rejects it with 401. Re-runs
+    // when the sign-in state settles so data loads as soon as auth is ready.
+    if (!isLoaded) return;
     loadData();
-  }, [loadData]);
+  }, [isLoaded, isSignedIn, loadData]);
+
+  if (storeState === "none") {
+    return (
+      <div className="flex min-h-screen">
+        <Sidebar />
+        <main className="scroll-slim min-w-0 flex-1 overflow-x-hidden">
+          <header className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-ink/10 bg-canvas/90 px-6 py-4 backdrop-blur">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-mute">
+                Selamat datang
+              </p>
+              <h1 className="font-display text-xl text-ink">Mulai dengan toko</h1>
+            </div>
+            <AuthControls />
+          </header>
+          <div className="mx-auto max-w-300 px-6 py-10">
+            <StoreOnboarding
+              onCreated={() => {
+                setStoreState("loading");
+                setLoading(true);
+                loadData();
+              }}
+            />
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen">
@@ -50,10 +104,11 @@ export default function Dashboard() {
         <header className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-ink/10 bg-canvas/90 px-6 py-4 backdrop-blur">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-mute">
-              Warung Bu Sari
+              {store ? store.name : "Toko"}
             </p>
             <h1 className="font-display text-xl text-ink">Dashboard</h1>
           </div>
+          <AuthControls />
         </header>
 
         <div className="mx-auto max-w-300 space-y-10 px-6 py-8">

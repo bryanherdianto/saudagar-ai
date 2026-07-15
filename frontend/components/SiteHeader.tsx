@@ -12,7 +12,7 @@ const NAV = [
 // treatment (border-b + backdrop-blur) so the whole site feels cohesive.
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-10 border-b border-ink/10 bg-canvas/90 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-ink/10 bg-canvas/90 backdrop-blur">
       <div className="mx-auto flex max-w-300 items-center justify-between gap-4 px-6 py-4">
         <Link href="/" className="flex items-center gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}

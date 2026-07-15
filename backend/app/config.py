@@ -34,9 +34,19 @@ class Settings(BaseSettings):
     gemini_embedding_model: str = "models/text-embedding-004"
     llm_temperature: float = 0.3
 
-    # --- CORS ---
-    # Comma-separated list of allowed origins for the Next.js frontend.
+# --- CORS ---
+    # Comma-separated lists of allowed origins for the Next.js frontend.
     cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
+
+    # --- Clerk (auth) ---
+    # The Clerk issuer/instance domain used to discover the JWKS endpoint and
+    # verify JWTs sent by the frontend. Set this to your Clerk Frontend API
+    # domain (e.g. "https://saudagar.clerk.accounts.dev").
+    # When empty, auth is DISABLED — every route is treated as the bootstrap
+    # user (dev/demo only). Configure before allowing real users.
+    clerk_issuer: str = ""
+    # Optional override of the JWKS URL (defaults to f"{clerk_issuer}/.well-known/jwks.json")
+    clerk_jwks_url: str = ""
 
     @property
     def cors_origins_list(self) -> list[str]:
@@ -46,6 +56,16 @@ class Settings(BaseSettings):
     def ai_enabled(self) -> bool:
         """True when a real Gemini key is configured."""
         return bool(self.gemini_api_key.strip())
+
+    @property
+    def auth_enabled(self) -> bool:
+        """True when Clerk verification is configured. When False, the backend
+        runs in a single-tenant demo mode using a bootstrap user."""
+        return bool(self.clerk_issuer.strip())
+
+    @property
+    def jwks_url(self) -> str:
+        return self.clerk_jwks_url.strip() or f"{self.clerk_issuer.rstrip('/')}/.well-known/jwks.json"
 
 
 @lru_cache

@@ -7,6 +7,9 @@ python-multipart==0.0.20
 pydantic-settings==2.7.1
 sqlmodel==0.0.22
 
+# --- Auth (Clerk JWT verification via JWKS) ---
+pyjwt==2.10.1
+
 # --- AI: LangChain + Google Gemini (RAG + tools/MCP-style function calling) ---
 langchain==0.3.14
 langchain-core==0.3.29

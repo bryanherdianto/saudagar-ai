@@ -1,7 +1,9 @@
 """Database models for Saudagar.ai.
 
-A deliberately small schema for the MVP: a single store profile, a product
-catalog (stock), and a ledger of income/expense transactions.
+A small multi-tenant schema: each Clerk-authenticated user owns exactly one
+store (enforced at the API layer; the FK is designed as 1:N for forward
+compatibility). Products and transactions are scoped to a store via a
+`store_id` foreign key so two merchants never share data.
 """
 
 from __future__ import annotations
@@ -15,12 +17,28 @@ def _utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
+class User(SQLModel, table=True):
+    """A Clerk-authenticated merchant. Bridge between Clerk's `sub` claim and
+    the local DB row."""
+
+    id: int | None = Field(default=None, primary_key=True)
+    clerk_user_id: str = Field(index=True, unique=True)
+    email: str = ""
+    name: str = ""
+    created_at: datetime = Field(default_factory=_utcnow)
+
+
 class Store(SQLModel, table=True):
-    """The merchant's business profile — used as RAG grounding context."""
+    """The merchant's business profile — used as RAG grounding context.
+
+    `owner_id` is a FK to `user.id`. Multiple stores per user are allowed at
+    the DB level (1:N) but the API enforces "max 1 store per user" for now.
+    """
 
     id: int | None = Field(default=None, primary_key=True)
     name: str = Field(index=True)
-    owner_name: str = ""
+    owner_id: int | None = Field(default=None, foreign_key="user.id", index=True)
+    owner_name: str = ""  # display label, kept in sync with the User's name
     category: str = ""  # e.g. "Warung Makan", "Toko Kelontong"
     currency: str = "IDR"
     default_language: str = "id"
@@ -29,9 +47,10 @@ class Store(SQLModel, table=True):
 
 
 class Product(SQLModel, table=True):
-    """A catalog item with its current stock level and price."""
+    """A catalog item with its current stock level and price, scoped to a store."""
 
     id: int | None = Field(default=None, primary_key=True)
+    store_id: int | None = Field(default=None, foreign_key="store.id", index=True)
     name: str = Field(index=True)
     sku: str | None = Field(default=None, index=True)
     category: str = ""
@@ -46,9 +65,10 @@ class Product(SQLModel, table=True):
 
 
 class Transaction(SQLModel, table=True):
-    """A single income or expense entry in the ledger."""
+    """A single income or expense entry in the ledger, scoped to a store."""
 
     id: int | None = Field(default=None, primary_key=True)
+    store_id: int | None = Field(default=None, foreign_key="store.id", index=True)
     kind: str = Field(index=True)  # "income" | "expense"
     category: str = ""  # "penjualan", "pembelian stok", "operasional", ...
     description: str = ""

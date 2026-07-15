@@ -1,6 +1,7 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Manrope, Inter } from "next/font/google";
+import { TokenGate } from "@/components/TokenGate";
 import "./globals.css";
 
 // Inter — the brand's utility face (body, labels, UI).
@@ -33,7 +34,9 @@ export default function RootLayout({
       className={`${inter.variable} ${manrope.variable} h-full antialiased`}
     >
       <body className="min-h-full">
-        <ClerkProvider>{children}</ClerkProvider>
+        <ClerkProvider>
+          <TokenGate>{children}</TokenGate>
+        </ClerkProvider>
       </body>
     </html>
   );

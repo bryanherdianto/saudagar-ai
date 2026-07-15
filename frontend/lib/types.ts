@@ -1,5 +1,30 @@
 // Shared types mirroring the FastAPI response schemas.
 
+export interface Store {
+  id: number;
+  name: string;
+  owner_id: number | null;
+  owner_name: string;
+  category: string;
+  currency: string;
+  default_language: string;
+  notes: string;
+  created_at: string;
+}
+
+export interface StoreStatus {
+  has_store: boolean;
+  store: Store | null;
+}
+
+export interface User {
+  id: number;
+  clerk_user_id: string;
+  email: string;
+  name: string;
+  created_at: string;
+}
+
 export interface Product {
   id: number;
   name: string;

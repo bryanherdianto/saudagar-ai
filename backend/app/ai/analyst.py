@@ -38,8 +38,8 @@ def _invoke_text(prompt: str) -> str | None:
 # --------------------------------------------------------------------------
 # Dashboard insight narrative
 # --------------------------------------------------------------------------
-def generate_insights(session: Session, days: int = 7) -> dict:
-    metrics = sales_summary(session, days)
+def generate_insights(session: Session, store_id: int, days: int = 7) -> dict:
+    metrics = sales_summary(session, store_id, days)
     llm = get_llm()
 
     if llm is None:
@@ -160,10 +160,10 @@ def _fallback_catalog(product_name: str, details: str, languages: list[str]) -> 
 # Auto customer service + upsell
 # --------------------------------------------------------------------------
 def generate_cs_reply(
-    session: Session, message: str, history: list[ChatMessage]
+    session: Session, store_id: int, message: str, history: list[ChatMessage]
 ) -> tuple[str, str | None]:
     llm = get_llm()
-    context = retrieve_context(session, message)
+    context = retrieve_context(session, store_id, message)
 
     if llm is None:
         return _fallback_cs(message, context)

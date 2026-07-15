@@ -2,7 +2,8 @@
 
 The agent must answer using the *specific* store's catalog and rules rather
 than hallucinating. This module builds a small in-memory vector store from the
-live product catalog + store profile and exposes a `retrieve_context` helper.
+active store's product catalog + store profile and exposes a
+`retrieve_context` helper.
 
 When embeddings are unavailable (mock mode) it falls back to a naive keyword
 match so grounding still works without an API key.
@@ -34,20 +35,24 @@ def _store_to_text(s: Store) -> str:
     )
 
 
-def build_corpus(session: Session) -> list[str]:
-    """Assemble the grounding documents from the database."""
+def build_corpus(session: Session, store_id: int) -> list[str]:
+    """Assemble the grounding documents for a single store."""
     docs: list[str] = []
-    store = session.exec(select(Store)).first()
+    store = session.exec(
+        select(Store).where(Store.id == store_id)
+    ).first()
     if store:
         docs.append(_store_to_text(store))
-    for product in session.exec(select(Product)).all():
+    for product in session.exec(
+        select(Product).where(Product.store_id == store_id)
+    ).all():
         docs.append(_product_to_text(product))
     return docs
 
 
-def retrieve_context(session: Session, query: str, k: int = 6) -> str:
+def retrieve_context(session: Session, store_id: int, query: str, k: int = 6) -> str:
     """Return the top-k most relevant grounding snippets for `query`."""
-    docs = build_corpus(session)
+    docs = build_corpus(session, store_id)
     if not docs:
         return "Belum ada data katalog atau profil toko."
 

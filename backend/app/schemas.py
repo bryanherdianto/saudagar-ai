@@ -130,3 +130,52 @@ class CustomerServiceResponse(BaseModel):
     reply: str
     suggested_upsell: str | None = None
     ai_enabled: bool = True
+
+
+# --- Store profile ---
+class StoreCreate(BaseModel):
+    name: str
+    category: str = ""
+    currency: str = "IDR"
+    default_language: str = "id"
+    notes: str = ""
+
+
+class StoreUpdate(BaseModel):
+    name: str | None = None
+    category: str | None = None
+    currency: str | None = None
+    default_language: str | None = None
+    notes: str | None = None
+
+
+class StoreRead(BaseModel):
+    id: int
+    name: str
+    owner_id: int | None
+    owner_name: str
+    category: str
+    currency: str
+    default_language: str
+    notes: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class StoreStatus(BaseModel):
+    """Lightweight response for the 'has_store?' check."""
+    has_store: bool
+    store: StoreRead | None = None
+
+
+class UserRead(BaseModel):
+    id: int
+    clerk_user_id: str
+    email: str
+    name: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
