@@ -68,6 +68,33 @@ export default function Dashboard() {
     loadData();
   }, [isLoaded, isSignedIn, loadData]);
 
+  // Live refresh for changes made outside this tab (e.g. a sale recorded via
+  // the Telegram bot): re-fetch the cheap store data — products and
+  // transactions, NOT insights (each insights call runs the LLM) — every 30s
+  // while the tab is visible, and immediately when the tab regains focus.
+  useEffect(() => {
+    if (storeState !== "ready") return;
+    const refreshLive = async () => {
+      if (document.hidden) return;
+      try {
+        const [prods, txs] = await Promise.all([
+          api.listProducts(),
+          api.listTransactions(50),
+        ]);
+        setProducts(prods);
+        setTransactions(txs);
+      } catch {
+        // Transient failure — the next tick or a manual reload will catch up.
+      }
+    };
+    const id = setInterval(refreshLive, 30_000);
+    window.addEventListener("focus", refreshLive);
+    return () => {
+      clearInterval(id);
+      window.removeEventListener("focus", refreshLive);
+    };
+  }, [storeState]);
+
   if (storeState === "none") {
     return (
       <div className="flex min-h-screen">
@@ -120,7 +147,7 @@ export default function Dashboard() {
                 {process.env.NEXT_PUBLIC_API_BASE_URL ??
                   "http://localhost:8000"}
               </code>
-              . Jalankan server FastAPI, lalu muat ulang halaman.
+              . Jalankan server FastAPI, lalu refresh halaman.
             </div>
           )}
 

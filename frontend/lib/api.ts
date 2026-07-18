@@ -53,6 +53,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
+    // ngrok's free tier intercepts browser requests with an HTML warning
+    // page unless this header is present. Harmless for other hosts.
+    "ngrok-skip-browser-warning": "true",
     ...(init?.headers as Record<string, string> | undefined),
   };
   if (token) headers["Authorization"] = `Bearer ${token}`;

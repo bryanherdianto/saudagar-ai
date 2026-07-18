@@ -9,6 +9,7 @@
 // website; the deep-link token is the only secret and it dies in minutes.
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useAuth } from "@clerk/nextjs";
 import { api } from "@/lib/api";
 import type { TelegramStatus } from "@/lib/types";
 import { TelegramIcon } from "./icons";
@@ -25,6 +26,9 @@ export function TelegramConnection() {
   const [status, setStatus] = useState<TelegramStatus | null>(null);
   const [error, setError] = useState<string | null>(null);
   const pollTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Wait for Clerk to hydrate before fetching — otherwise the first request
+  // fires without a session token and the backend rejects it with 401.
+  const { isLoaded } = useAuth();
 
   const stopPolling = useCallback(() => {
     if (pollTimer.current) {
@@ -47,19 +51,26 @@ export function TelegramConnection() {
     }
   }, []);
 
-  // Initial status check on mount.
+  // Initial status check, once Clerk is ready.
   useEffect(() => {
+    if (!isLoaded) return;
     let cancelled = false;
     (async () => {
       const s = await refresh();
       if (cancelled) return;
-      if (s) setPhase(s.connected ? "connected" : "idle");
+      if (s) {
+        setPhase(s.connected ? "connected" : "idle");
+      } else {
+        // Status check failed (offline, 401, …) — fall back to idle instead
+        // of spinning forever; `refresh` already handled the 503 case.
+        setPhase((p) => (p === "unavailable" ? p : "idle"));
+      }
     })();
     return () => {
       cancelled = true;
       stopPolling();
     };
-  }, [refresh, stopPolling]);
+  }, [isLoaded, refresh, stopPolling]);
 
   const connect = useCallback(async () => {
     setError(null);
@@ -81,7 +92,7 @@ export function TelegramConnection() {
           stopPolling();
           setPhase("idle");
           setError(
-            "Belum terdeteksi. Jika sudah menekan Start di Telegram, muat ulang halaman ini.",
+            "Belum terdeteksi. Jika sudah menekan Start di Telegram, refresh halaman ini.",
           );
         }
       }, POLL_INTERVAL_MS);
@@ -133,11 +144,9 @@ export function TelegramConnection() {
         <div className="mt-3 space-y-4">
           <p className="text-sm text-body">
             Hubungkan akun Telegram untuk mencatat penjualan, mengecek stok, dan
-            bertanya ke asisten langsung dari chat — data toko tetap satu dengan
-            dashboard ini.
+            bertanya ke asisten langsung dari chat.
           </p>
           <Button onClick={connect}>
-            <TelegramIcon className="h-5 w-5" />
             Hubungkan Telegram
           </Button>
         </div>
