@@ -1,6 +1,13 @@
 "use client";
 
-import { BoxIcon, ChartIcon, ChatIcon, ReceiptIcon, TagIcon } from "./icons";
+import {
+  BoxIcon,
+  ChartIcon,
+  ChatIcon,
+  ReceiptIcon,
+  TagIcon,
+  TelegramIcon,
+} from "./icons";
 
 const NAV = [
   { id: "ringkasan", label: "Ringkasan", icon: ChartIcon },
@@ -8,6 +15,7 @@ const NAV = [
   { id: "katalog", label: "Katalog AI", icon: TagIcon },
   { id: "stok", label: "Stok", icon: BoxIcon },
   { id: "ledger", label: "Buku Kas", icon: ReceiptIcon },
+  { id: "integrasi", label: "Integrasi", icon: TelegramIcon },
 ];
 
 export function Sidebar() {

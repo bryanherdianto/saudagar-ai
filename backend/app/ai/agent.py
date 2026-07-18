@@ -47,12 +47,18 @@ def run_assistant(
     store_id: int,
     message: str,
     history: list[ChatMessage] | None = None,
+    source: str = "assistant",
 ) -> tuple[str, list[str], bool]:
-    """Return (reply, actions_taken, ai_enabled)."""
+    """Return (reply, actions_taken, ai_enabled).
+
+    `source` tags any transaction the AI records with its originating channel
+    (e.g. "assistant" for the dashboard chat, "telegram" for the bot), so the
+    dashboard can show "via Telegram" labels.
+    """
     history = history or []
     llm = get_llm()
     if llm is None:
-        reply, actions = _rule_based_assistant(session, store_id, message)
+        reply, actions = _rule_based_assistant(session, store_id, message, source)
         return reply, actions, False
 
     from langchain_core.messages import (
@@ -62,7 +68,7 @@ def run_assistant(
         ToolMessage,
     )
 
-    tools = build_tools(session, store_id)
+    tools = build_tools(session, store_id, source=source)
     tools_by_name = {t.name: t for t in tools}
     llm_with_tools = llm.bind_tools(tools)
 
@@ -145,7 +151,7 @@ def _parse_amount(text: str) -> float | None:
 
 
 def _rule_based_assistant(
-    session: Session, store_id: int, message: str
+    session: Session, store_id: int, message: str, source: str = "assistant"
 ) -> tuple[str, list[str]]:
     """A deterministic parser used when Gemini is not configured."""
     text = message.lower()
@@ -186,7 +192,7 @@ def _rule_based_assistant(
     if any(w in text for w in _EXPENSE_KEYWORDS):
         tx = services.record_expense(
             session, store_id, amount or 0.0, product_name=product_guess,
-            quantity=quantity, unit=unit, source="assistant",
+            quantity=quantity, unit=unit, source=source,
         )
         msg = f"Oke, dicatat pengeluaran Rp{tx.amount:,.0f}"
         msg += f" untuk {quantity:g} {unit} {product_guess}." if product_guess else "."
@@ -195,7 +201,7 @@ def _rule_based_assistant(
 
     if any(w in text for w in _INCOME_KEYWORDS) or qty_match:
         tx = services.record_sale(
-            session, store_id, product_guess, quantity, amount, unit, source="assistant",
+            session, store_id, product_guess, quantity, amount, unit, source=source,
         )
         msg = f"Sip! Dicatat penjualan {quantity:g} {tx.unit} {tx.product_name} senilai Rp{tx.amount:,.0f}."
         actions.append(msg)

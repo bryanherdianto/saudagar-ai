@@ -60,13 +60,17 @@ class SummaryArgs(BaseModel):
     days: int = Field(default=7, description="Rentang hari untuk ringkasan penjualan")
 
 
-def build_tools(session: Session, store_id: int) -> list[Any]:
-    """Create the tool set bound to a database session and a store scope."""
+def build_tools(session: Session, store_id: int, source: str = "assistant") -> list[Any]:
+    """Create the tool set bound to a database session and a store scope.
+
+    `source` is stamped on any transaction these tools record, so the channel
+    that triggered the AI (dashboard vs. telegram) is preserved for auditing.
+    """
     from langchain_core.tools import StructuredTool
 
     def _record_sale(product_name: str, quantity: float, amount: float | None = None, unit: str = "") -> str:
         tx = services.record_sale(
-            session, store_id, product_name, quantity, amount, unit, source="assistant"
+            session, store_id, product_name, quantity, amount, unit, source=source
         )
         return (
             f"Tercatat penjualan {tx.quantity:g} {tx.unit} {tx.product_name} "
@@ -83,7 +87,7 @@ def build_tools(session: Session, store_id: int) -> list[Any]:
     ) -> str:
         tx = services.record_expense(
             session, store_id, amount, category, description, product_name,
-            quantity, unit, source="assistant",
+            quantity, unit, source=source,
         )
         extra = f" untuk {tx.quantity:g} {tx.unit} {tx.product_name}" if tx.product_name else ""
         return f"Tercatat pengeluaran '{tx.category}'{extra} senilai Rp{tx.amount:,.0f}."

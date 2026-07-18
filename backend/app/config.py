@@ -38,6 +38,20 @@ class Settings(BaseSettings):
     # Comma-separated lists of allowed origins for the Next.js frontend.
     cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
 
+    # --- Telegram bot integration ---
+    # The bot token from BotFather. MUST stay in the VPS environment only —
+    # never commit it and never expose it to the frontend. When empty, the
+    # Telegram webhook and linking endpoints run in a disabled/no-op mode.
+    telegram_bot_token: str = ""
+    # Shared secret Telegram echoes back in the `X-Telegram-Bot-Api-Secret-Token`
+    # header on every webhook call. We set it when registering the webhook and
+    # compare it on each request to reject spoofed calls.
+    telegram_webhook_secret: str = ""
+    # The bot's public @username, used to build deep links (t.me/<username>).
+    telegram_bot_username: str = "saudagar_ai_bot"
+    # How long a dashboard-generated linking token stays valid, in minutes.
+    telegram_link_token_ttl_minutes: int = 10
+
     # --- Clerk (auth) ---
     # The Clerk issuer/instance domain used to discover the JWKS endpoint and
     # verify JWTs sent by the frontend. Set this to your Clerk Frontend API
@@ -56,6 +70,16 @@ class Settings(BaseSettings):
     def ai_enabled(self) -> bool:
         """True when a real Gemini key is configured."""
         return bool(self.gemini_api_key.strip())
+
+    @property
+    def telegram_enabled(self) -> bool:
+        """True when a Telegram bot token is configured."""
+        return bool(self.telegram_bot_token.strip())
+
+    @property
+    def telegram_api_url(self) -> str:
+        """Base URL for the Telegram Bot API for the configured token."""
+        return f"https://api.telegram.org/bot{self.telegram_bot_token.strip()}"
 
     @property
     def auth_enabled(self) -> bool:

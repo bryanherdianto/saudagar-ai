@@ -16,6 +16,8 @@ import type {
   Product,
   Store,
   StoreStatus,
+  TelegramLinkResponse,
+  TelegramStatus,
   Transaction,
   User,
 } from "./types";
@@ -127,5 +129,17 @@ export const api = {
     request<CatalogResponse>("/api/catalog/generate", {
       method: "POST",
       body: JSON.stringify({ product_name, details, languages, tone }),
+    }),
+
+  // --- Telegram integration ---
+  telegramLink: () =>
+    request<TelegramLinkResponse>("/api/integrations/telegram/link", {
+      method: "POST",
+    }),
+  telegramStatus: () =>
+    request<TelegramStatus>("/api/integrations/telegram/status"),
+  telegramDisconnect: () =>
+    request<{ disconnected: boolean }>("/api/integrations/telegram/link", {
+      method: "DELETE",
     }),
 };

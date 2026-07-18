@@ -12,6 +12,7 @@ import { CatalogGenerator } from "@/components/CatalogGenerator";
 import { TransactionsTable } from "@/components/TransactionsTable";
 import { ProductsTable } from "@/components/ProductsTable";
 import { StoreOnboarding } from "@/components/StoreOnboarding";
+import { TelegramConnection } from "@/components/TelegramConnection";
 import { AuthControls } from "@/components/AuthControls";
 import { SectionTitle } from "@/components/ui";
 
@@ -186,6 +187,17 @@ export default function Dashboard() {
           <section id="ledger" className="scroll-mt-20">
             <SectionTitle eyebrow="Data Toko" title="Buku kas" />
             <TransactionsTable transactions={transactions} />
+          </section>
+
+          {/* Integrasi */}
+          <section id="integrasi" className="scroll-mt-20">
+            <SectionTitle
+              eyebrow="Kanal Terhubung"
+              title="Integrasi"
+            />
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <TelegramConnection />
+            </div>
           </section>
 
           <footer className="border-t border-ink/10 pt-6 text-center text-xs text-mute">

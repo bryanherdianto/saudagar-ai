@@ -9,7 +9,18 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.database import init_db
-from app.routers import catalog, chat, cs, insights, products, store, transactions, user
+from app.routers import (
+    catalog,
+    chat,
+    cs,
+    insights,
+    integrations,
+    products,
+    store,
+    telegram,
+    transactions,
+    user,
+)
 from app.seed import seed_if_empty
 
 
@@ -43,6 +54,8 @@ app.include_router(products.router)
 app.include_router(transactions.router)
 app.include_router(store.router)
 app.include_router(user.router)
+app.include_router(integrations.router)
+app.include_router(telegram.router)
 
 
 @app.get("/", tags=["health"])
@@ -63,4 +76,5 @@ def health() -> dict:
         "status": "ok",
         "ai_enabled": settings.ai_enabled,
         "auth_enabled": settings.auth_enabled,
+        "telegram_enabled": settings.telegram_enabled,
     }

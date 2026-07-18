@@ -15,6 +15,6 @@ router = APIRouter(prefix="/api/chat", tags=["assistant"])
 def chat(body: ChatRequest, ctx: AuthContext = Depends(get_ctx)) -> ChatResponse:
     store_id = ctx.require_store_id()
     reply, actions, ai_enabled = run_assistant(
-        ctx.session, store_id, body.message, body.history
+        ctx.session, store_id, body.message, body.history, source="dashboard"
     )
     return ChatResponse(reply=reply, actions=actions, ai_enabled=ai_enabled)

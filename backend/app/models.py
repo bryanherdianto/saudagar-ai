@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, SQLModel, UniqueConstraint
 
 
 def _utcnow() -> datetime:
@@ -77,5 +77,83 @@ class Transaction(SQLModel, table=True):
     unit: str = ""
     product_id: int | None = Field(default=None, foreign_key="product.id")
     product_name: str = ""
-    source: str = "manual"  # "manual" | "assistant"
+    # Which channel produced this row: "manual" | "dashboard" | "assistant"
+    # | "telegram" | "whatsapp". Gives merchants auditability when the AI acts
+    # outside the dashboard.
+    source: str = "manual"
     created_at: datetime = Field(default_factory=_utcnow, index=True)
+
+
+# --------------------------------------------------------------------------
+# Telegram integration
+# --------------------------------------------------------------------------
+class TelegramConnection(SQLModel, table=True):
+    """Links a Telegram chat to a store. This is the bridge that lets the bot
+    resolve an incoming `chat_id` back to the shared `store_id`, so Telegram
+    and the dashboard act on exactly the same catalog/stock/ledger.
+
+    One active connection per chat AND per store (a chat talks to one store,
+    a store is driven by one chat) — enforced by unique constraints below.
+    """
+
+    __table_args__ = (
+        UniqueConstraint("telegram_chat_id", name="uq_telegram_chat"),
+        UniqueConstraint("store_id", name="uq_telegram_store"),
+    )
+
+    id: int | None = Field(default=None, primary_key=True)
+    store_id: int = Field(foreign_key="store.id", index=True)
+    telegram_chat_id: int = Field(index=True)
+    telegram_username: str = ""  # @handle, best-effort (may be empty)
+    connected_at: datetime = Field(default_factory=_utcnow)
+    is_active: bool = True
+
+
+class TelegramLinkToken(SQLModel, table=True):
+    """A short-lived, single-use token minted by the dashboard so a Clerk user
+    can prove ownership of the store when they tap `/start link_<token>` in
+    Telegram. Never guessable (secrets.token_urlsafe) and expires quickly."""
+
+    id: int | None = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    store_id: int = Field(foreign_key="store.id", index=True)
+    token: str = Field(index=True, unique=True)
+    expires_at: datetime
+    used_at: datetime | None = None
+    created_at: datetime = Field(default_factory=_utcnow)
+
+
+class ConversationMessage(SQLModel, table=True):
+    """Short-term chat memory for channels that can't hold history themselves.
+
+    The dashboard keeps its history in the browser and sends it with each
+    /api/chat call; Telegram has no such client state, so we retain the most
+    recent exchanges per (store, channel) here and prune the rest. Kept
+    separate per channel on purpose — a Telegram conversation never leaks
+    into the dashboard chat window, while both act on the same store data.
+    """
+
+    id: int | None = Field(default=None, primary_key=True)
+    store_id: int = Field(foreign_key="store.id", index=True)
+    channel: str = Field(default="telegram", index=True)  # "telegram" | "whatsapp"
+    role: str  # "user" | "assistant"
+    content: str = ""
+    created_at: datetime = Field(default_factory=_utcnow, index=True)
+
+
+class ProcessedWebhookEvent(SQLModel, table=True):
+    """Idempotency ledger. Telegram retries a webhook until it gets a 200, so
+    we record each `update_id` here BEFORE recording finance so a replayed
+    update can never double-book a sale. `external_event_id` is unique per
+    platform."""
+
+    __table_args__ = (
+        UniqueConstraint(
+            "platform", "external_event_id", name="uq_webhook_event"
+        ),
+    )
+
+    id: int | None = Field(default=None, primary_key=True)
+    platform: str = Field(default="telegram", index=True)
+    external_event_id: str = Field(index=True)  # Telegram update_id (as str)
+    processed_at: datetime = Field(default_factory=_utcnow)

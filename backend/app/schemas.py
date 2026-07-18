@@ -170,6 +170,23 @@ class StoreStatus(BaseModel):
     store: StoreRead | None = None
 
 
+# --- Telegram integration ---
+class TelegramLinkResponse(BaseModel):
+    """Returned by POST /api/integrations/telegram/link — everything the
+    frontend needs to open the deep link and start the connect flow."""
+    bot_username: str
+    deep_link: str
+    expires_at: datetime
+
+
+class TelegramStatusResponse(BaseModel):
+    """Returned by GET /api/integrations/telegram/status — whether the
+    signed-in user's store is currently linked to a Telegram chat."""
+    connected: bool
+    telegram_username: str | None = None
+    connected_at: datetime | None = None
+
+
 class UserRead(BaseModel):
     id: int
     clerk_user_id: str

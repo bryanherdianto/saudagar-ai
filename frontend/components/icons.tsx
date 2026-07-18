@@ -137,6 +137,23 @@ export function SparkIcon({ className = base }: IconProps) {
   );
 }
 
+export function TelegramIcon({ className = base }: IconProps) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M21.5 4.5 2.9 11.7c-.8.3-.8 1.4.1 1.6l4.7 1.5 1.8 5.6c.3.8 1.3 1 1.8.3l2.6-3.2 4.8 3.5c.6.5 1.5.1 1.7-.6l3-14.2c.2-.9-.7-1.6-1.9-1.2z" />
+      <path d="M9.5 14.5 19 6.5" />
+    </svg>
+  );
+}
+
 export function ArrowUpIcon({ className = base }: IconProps) {
   return (
     <svg

@@ -97,3 +97,15 @@ export interface CustomerServiceResponse {
   suggested_upsell: string | null;
   ai_enabled: boolean;
 }
+
+export interface TelegramLinkResponse {
+  bot_username: string;
+  deep_link: string;
+  expires_at: string;
+}
+
+export interface TelegramStatus {
+  connected: boolean;
+  telegram_username: string | null;
+  connected_at: string | null;
+}

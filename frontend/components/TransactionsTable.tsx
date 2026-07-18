@@ -2,6 +2,15 @@ import type { Transaction } from "@/lib/types";
 import { rupiah, dateTime } from "@/lib/format";
 import { ArrowDownIcon, ArrowUpIcon } from "./icons";
 
+// Channel labels for Transaction.source. "manual" gets no label (the default
+// path); everything else shows a small "via …" tag for auditability.
+const SOURCE_LABELS: Record<string, string> = {
+  telegram: "via Telegram",
+  whatsapp: "via WhatsApp",
+  dashboard: "via Asisten",
+  assistant: "via Asisten", // legacy rows recorded before channel tracking
+};
+
 export function TransactionsTable({
   transactions,
 }: {
@@ -29,6 +38,7 @@ export function TransactionsTable({
         <tbody>
           {transactions.map((t) => {
             const income = t.kind === "income";
+            const sourceLabel = SOURCE_LABELS[t.source];
             return (
               <tr
                 key={t.id}
@@ -53,9 +63,15 @@ export function TransactionsTable({
                       <p className="font-medium text-ink">
                         {t.product_name || t.description || "Transaksi"}
                       </p>
-                      {t.quantity > 0 && (
+                      {(t.quantity > 0 || sourceLabel) && (
                         <p className="text-xs text-mute">
-                          {t.quantity} {t.unit}
+                          {t.quantity > 0 && (
+                            <span>
+                              {t.quantity} {t.unit}
+                            </span>
+                          )}
+                          {t.quantity > 0 && sourceLabel && <span> · </span>}
+                          {sourceLabel && <span>{sourceLabel}</span>}
                         </p>
                       )}
                     </div>
