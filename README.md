@@ -2,7 +2,7 @@
 
 Ekosistem **asisten virtual + dashboard analitik** untuk UMKM Indonesia. Alih-alih
 memaksa pedagang mempelajari aplikasi kasir yang rumit, Saudagar.ai bertindak
-sebagai **"karyawan digital"** yang bisa diajak mengobrol — mencatat keuangan &
+sebagai **"karyawan digital"** yang bisa diajak mengobrol - mencatat keuangan &
 stok dari bahasa sehari-hari, melayani pelanggan otomatis, dan menerjemahkan
 data menjadi insight yang mudah dipahami.
 
@@ -25,7 +25,7 @@ data menjadi insight yang mudah dipahami.
 saudagar-ai/
 ├── backend/     FastAPI + LangChain + Gemini  (RAG grounding + MCP-style tools)
 │               → REST API di http://localhost:8000
-└── frontend/    Next.js 16 + Tailwind v4      (dashboard, desain ala Wise — lihat DESIGN.md)
+└── frontend/    Next.js 16 + Tailwind v4      (dashboard, desain ala Wise - lihat DESIGN.md)
                 → Web app di http://localhost:3000
 ```
 

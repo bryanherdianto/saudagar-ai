@@ -4,13 +4,13 @@ import { Manrope, Inter } from "next/font/google";
 import { TokenGate } from "@/components/TokenGate";
 import "./globals.css";
 
-// Inter — the brand's utility face (body, labels, UI).
+// Inter - the brand's utility face (body, labels, UI).
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
 });
 
-// Manrope — open-source stand-in for the proprietary heavy display face.
+// Manrope - open-source stand-in for the proprietary heavy display face.
 const manrope = Manrope({
   variable: "--font-manrope",
   subsets: ["latin"],

@@ -26,7 +26,7 @@ export function TelegramConnection() {
   const [status, setStatus] = useState<TelegramStatus | null>(null);
   const [error, setError] = useState<string | null>(null);
   const pollTimer = useRef<ReturnType<typeof setInterval> | null>(null);
-  // Wait for Clerk to hydrate before fetching — otherwise the first request
+  // Wait for Clerk to hydrate before fetching - otherwise the first request
   // fires without a session token and the backend rejects it with 401.
   const { isLoaded } = useAuth();
 
@@ -61,7 +61,7 @@ export function TelegramConnection() {
       if (s) {
         setPhase(s.connected ? "connected" : "idle");
       } else {
-        // Status check failed (offline, 401, …) — fall back to idle instead
+        // Status check failed (offline, 401, …) - fall back to idle instead
         // of spinning forever; `refresh` already handled the 503 case.
         setPhase((p) => (p === "unavailable" ? p : "idle"));
       }

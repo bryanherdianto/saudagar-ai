@@ -1,4 +1,4 @@
-# Saudagar.ai — Backend
+# Saudagar.ai - Backend
 
 FastAPI service that powers the "karyawan digital" assistant: natural-language
 bookkeeping & stock, auto customer service + upsell, dashboard insight
@@ -47,7 +47,7 @@ app/
 ├── database.py          SQLModel engine + session
 ├── models.py            Store, Product, Transaction tables
 ├── schemas.py           Pydantic request/response models
-├── services.py          Core ops (record sale/expense, stock) — shared by API + AI
+├── services.py          Core ops (record sale/expense, stock) - shared by API + AI
 ├── seed.py              Demo data
 ├── ai/
 │   ├── llm.py           Gemini chat + embedding factories (None in mock mode)

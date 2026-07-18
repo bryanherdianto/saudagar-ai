@@ -55,7 +55,7 @@ def send_message(chat_id: int, text: str) -> bool:
 
     Synchronous on purpose: the webhook handler is a sync path operation that
     FastAPI runs in a worker thread, so a blocking call here does not stall
-    the event loop. Never raises — failures are logged and reported via the
+    the event loop. Never raises - failures are logged and reported via the
     return value so one bad send can't 500 the webhook (which would make
     Telegram retry the whole update)."""
     if not settings.telegram_enabled:
@@ -69,7 +69,7 @@ def send_message(chat_id: int, text: str) -> bool:
         )
         resp.raise_for_status()
         return True
-    except Exception as exc:  # network/HTTP errors — log without the token
+    except Exception as exc:  # network/HTTP errors - log without the token
         logger.error("Failed to send Telegram message to %s: %s", chat_id, exc)
         return False
 
@@ -180,7 +180,7 @@ def disconnect(session: Session, store_id: int) -> bool:
     if conn is None:
         return False
     session.delete(conn)
-    # Drop the channel's conversation memory too — a future re-link (possibly
+    # Drop the channel's conversation memory too - a future re-link (possibly
     # from a different Telegram account) should start with a clean slate.
     for row in session.exec(
         select(ConversationMessage).where(
@@ -268,7 +268,7 @@ def claim_event(session: Session, update_id: int, platform: str = "telegram") ->
 
     Returns True if this is the FIRST time we've seen this update (caller
     should process it), or False if it was already processed (caller should
-    skip — this is a Telegram retry). We insert the marker BEFORE doing any
+    skip - this is a Telegram retry). We insert the marker BEFORE doing any
     finance work so a replay can never double-book a sale; the DB unique
     constraint makes the claim race-safe across workers.
     """

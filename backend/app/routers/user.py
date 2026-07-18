@@ -1,4 +1,4 @@
-"""User profile endpoint — returns the currently authenticated user."""
+"""User profile endpoint - returns the currently authenticated user."""
 
 from __future__ import annotations
 

@@ -33,7 +33,7 @@ Tugasmu:
 - Menjawab pertanyaan bisnis berdasarkan data toko yang diberikan.
 
 Aturan:
-- SELALU gunakan tools yang tersedia untuk mencatat transaksi atau mengubah stok — jangan hanya mengklaim sudah dicatat.
+- SELALU gunakan tools yang tersedia untuk mencatat transaksi atau mengubah stok - jangan hanya mengklaim sudah dicatat.
 - Rujuk pada KONTEKS TOKO di bawah; jangan mengarang produk atau harga yang tidak ada.
 - Jika informasi kurang (mis. jumlah tidak jelas), tanyakan singkat.
 - Jawab dalam Bahasa Indonesia yang santai dan singkat. Gunakan format Rupiah.
@@ -114,7 +114,7 @@ def run_assistant(
                 )
             )
 
-    # Ran out of iterations — return a best-effort summary of what we did.
+    # Ran out of iterations - return a best-effort summary of what we did.
     fallback = "Beberapa aksi sudah dijalankan:\n" + "\n".join(f"- {a}" for a in actions)
     return fallback, actions, True
 
@@ -157,7 +157,7 @@ def _rule_based_assistant(
     text = message.lower()
     actions: list[str] = []
 
-    # Stock check intent — try to match a known product name in the message.
+    # Stock check intent - try to match a known product name in the message.
     if any(w in text for w in ("stok", "sisa", "ada berapa")):
         for product in session.exec(
             select(Product).where(Product.store_id == store_id)
@@ -176,7 +176,7 @@ def _rule_based_assistant(
         quantity = float(qty_match.group(1).replace(",", "."))
         unit = qty_match.group(2)
     else:
-        # No explicit unit — treat the first bare number (not part of a rupiah
+        # No explicit unit - treat the first bare number (not part of a rupiah
         # amount) as the quantity, e.g. "laku 10 es teh manis".
         without_amount = re.sub(r"\d+(?:[.,]\d+)?\s*(?:ribu|rb|k|juta|jt)\b", " ", text)
         bare = re.search(r"\b(\d+(?:[.,]\d+)?)\b", without_amount)

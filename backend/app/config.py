@@ -36,10 +36,10 @@ class Settings(BaseSettings):
 
 # --- CORS ---
     # Comma-separated lists of allowed origins for the Next.js frontend.
-    cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
+    cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000,https://saudagar-ai.bryanherdianto.site"
 
     # --- Telegram bot integration ---
-    # The bot token from BotFather. MUST stay in the VPS environment only —
+    # The bot token from BotFather. MUST stay in the VPS environment only -
     # never commit it and never expose it to the frontend. When empty, the
     # Telegram webhook and linking endpoints run in a disabled/no-op mode.
     telegram_bot_token: str = ""
@@ -56,7 +56,7 @@ class Settings(BaseSettings):
     # The Clerk issuer/instance domain used to discover the JWKS endpoint and
     # verify JWTs sent by the frontend. Set this to your Clerk Frontend API
     # domain (e.g. "https://saudagar.clerk.accounts.dev").
-    # When empty, auth is DISABLED — every route is treated as the bootstrap
+    # When empty, auth is DISABLED - every route is treated as the bootstrap
     # user (dev/demo only). Configure before allowing real users.
     clerk_issuer: str = ""
     # Optional override of the JWKS URL (defaults to f"{clerk_issuer}/.well-known/jwks.json")

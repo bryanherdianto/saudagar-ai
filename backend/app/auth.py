@@ -2,7 +2,7 @@
 
 Exposes a single FastAPI dependency `get_ctx` that yields an `AuthContext`
 containing the live DB session, the authenticated user, and their active
-store (or `None` when the user has not created one yet — letting onboarding
+store (or `None` when the user has not created one yet - letting onboarding
 endpoints handle that case themselves).
 
 Verification strategy: pyjwt with Clerk's JWKS endpoint (cached). When
@@ -48,7 +48,7 @@ def _verify_token(token: str) -> dict:
     """Verify the bearer JWT against Clerk's JWKS and return its claims."""
     client = _get_jwks_client()
     if client is None:
-        # Auth disabled — callers must short-circuit to the bootstrap path.
+        # Auth disabled - callers must short-circuit to the bootstrap path.
         raise RuntimeError("Auth is disabled but _verify_token was called")
 
     signing_key = client.get_signing_key_from_jwt(token)

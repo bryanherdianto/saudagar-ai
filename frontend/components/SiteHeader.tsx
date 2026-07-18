@@ -8,7 +8,7 @@ const NAV = [
   { href: "/privacy-policy", label: "Privasi" },
 ];
 
-// Marketing top nav — sticky, canvas-backed, mirrors the dashboard header
+// Marketing top nav - sticky, canvas-backed, mirrors the dashboard header
 // treatment (border-b + backdrop-blur) so the whole site feels cohesive.
 export function SiteHeader() {
   return (

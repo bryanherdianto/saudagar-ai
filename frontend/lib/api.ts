@@ -4,7 +4,7 @@
 // getter is configured at runtime by the <TokenGate /> client component
 // (mounted inside <ClerkProvider>), so this module stays framework-agnostic.
 // When no getter is configured (server-side or pre-mount), requests go out
-// without an Authorization header — the backend then returns 401 unless auth
+// without an Authorization header - the backend then returns 401 unless auth
 // is disabled via CLERK_ISSUER.
 
 import type {

@@ -38,12 +38,12 @@ def _migrate_legacy_schema() -> None:
     if "store" not in inspector.get_table_names():
         return
 
-    # Ensure new columns exist — ALTER TABLE ADD COLUMN is idempotent via try/except.
+    # Ensure new columns exist - ALTER TABLE ADD COLUMN is idempotent via try/except.
     def _add_column(table: str, column: str, ddl: str) -> None:
         cols = {c["name"] for c in inspector.get_columns(table)}
         if column not in cols:
             with engine.begin() as conn:
-                # Quote the table name — `transaction` is a reserved SQLite keyword.
+                # Quote the table name - `transaction` is a reserved SQLite keyword.
                 conn.execute(text(f'ALTER TABLE "{table}" ADD COLUMN {ddl}'))
 
     _add_column("store", "owner_id", "owner_id INTEGER REFERENCES user(id)")

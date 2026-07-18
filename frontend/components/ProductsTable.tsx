@@ -31,7 +31,7 @@ export function ProductsTable({ products }: { products: Product[] }) {
               >
                 <td className="px-5 py-3">
                   <p className="font-medium text-ink">{p.name}</p>
-                  <p className="text-xs text-mute">{p.category || "—"}</p>
+                  <p className="text-xs text-mute">{p.category || "-"}</p>
                 </td>
                 <td className="px-5 py-3 text-right text-body">
                   {rupiah(p.price)}

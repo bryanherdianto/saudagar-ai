@@ -53,7 +53,7 @@ export default function About() {
           </p>
         </section>
 
-        {/* Founding story — dark card, mirrors InsightPanel */}
+        {/* Founding story - dark card, mirrors InsightPanel */}
         <section className="mx-auto max-w-300 px-6 pb-16">
           <div className="rounded-xl bg-ink p-8 text-primary">
             <p className="text-xs font-semibold uppercase tracking-wider text-primary/80">

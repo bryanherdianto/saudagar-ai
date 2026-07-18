@@ -29,7 +29,7 @@ class User(SQLModel, table=True):
 
 
 class Store(SQLModel, table=True):
-    """The merchant's business profile — used as RAG grounding context.
+    """The merchant's business profile - used as RAG grounding context.
 
     `owner_id` is a FK to `user.id`. Multiple stores per user are allowed at
     the DB level (1:N) but the API enforces "max 1 store per user" for now.
@@ -93,7 +93,7 @@ class TelegramConnection(SQLModel, table=True):
     and the dashboard act on exactly the same catalog/stock/ledger.
 
     One active connection per chat AND per store (a chat talks to one store,
-    a store is driven by one chat) — enforced by unique constraints below.
+    a store is driven by one chat) - enforced by unique constraints below.
     """
 
     __table_args__ = (
@@ -129,7 +129,7 @@ class ConversationMessage(SQLModel, table=True):
     The dashboard keeps its history in the browser and sends it with each
     /api/chat call; Telegram has no such client state, so we retain the most
     recent exchanges per (store, channel) here and prune the rest. Kept
-    separate per channel on purpose — a Telegram conversation never leaks
+    separate per channel on purpose - a Telegram conversation never leaks
     into the dashboard chat window, while both act on the same store data.
     """
 

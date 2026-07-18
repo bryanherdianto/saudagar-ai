@@ -81,12 +81,12 @@ def _fallback_insights(metrics: dict) -> dict:
 
     recs = []
     if top:
-        recs.append(f"Produk '{top[0]['name']}' paling laris — pastikan stoknya selalu tersedia.")
+        recs.append(f"Produk '{top[0]['name']}' paling laris - pastikan stoknya selalu tersedia.")
     if low:
         names = ", ".join(p["name"] for p in low[:3])
         recs.append(f"Segera restock: {names} sudah menipis.")
     if profit < 0:
-        recs.append("Pengeluaran melebihi pemasukan — tinjau kembali biaya pembelian stok.")
+        recs.append("Pengeluaran melebihi pemasukan - tinjau kembali biaya pembelian stok.")
     if not recs:
         recs.append("Catat lebih banyak transaksi agar insight makin akurat.")
 
@@ -139,12 +139,12 @@ def generate_catalog(
 def _fallback_catalog(product_name: str, details: str, languages: list[str]) -> list[CatalogItem]:
     templates = {
         "id": (
-            f"{product_name} Berkualitas — Favorit Pelanggan",
+            f"{product_name} Berkualitas - Favorit Pelanggan",
             f"{product_name} pilihan terbaik{(' , ' + details) if details else ''}. "
             "Rasa mantap, harga bersahabat, siap kirim hari ini!",
         ),
         "en": (
-            f"Premium {product_name} — Customer Favorite",
+            f"Premium {product_name} - Customer Favorite",
             f"Enjoy our best {product_name}{(': ' + details) if details else ''}. "
             "Great quality, friendly price, ready to ship today!",
         ),

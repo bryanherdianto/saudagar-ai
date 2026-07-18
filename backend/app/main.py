@@ -33,7 +33,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Saudagar.ai API",
-    description="Asisten usaha dagang pintar — FastAPI + LangChain + Gemini.",
+    description="Asisten usaha dagang pintar - FastAPI + LangChain + Gemini.",
     version="0.1.0",
     lifespan=lifespan,
 )

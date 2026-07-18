@@ -61,16 +61,19 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-    // Wait for Clerk to hydrate before fetching — otherwise the request fires
+    // Wait for Clerk to hydrate before fetching - otherwise the request fires
     // without a session token and the backend rejects it with 401. Re-runs
     // when the sign-in state settles so data loads as soon as auth is ready.
     if (!isLoaded) return;
+    // loadData is async and only calls setState after its awaits resolve, so
+    // it cannot cascade renders synchronously — the rule is over-cautious here.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadData();
   }, [isLoaded, isSignedIn, loadData]);
 
   // Live refresh for changes made outside this tab (e.g. a sale recorded via
-  // the Telegram bot): re-fetch the cheap store data — products and
-  // transactions, NOT insights (each insights call runs the LLM) — every 30s
+  // the Telegram bot): re-fetch the cheap store data - products and
+  // transactions, NOT insights (each insights call runs the LLM) - every 30s
   // while the tab is visible, and immediately when the tab regains focus.
   useEffect(() => {
     if (storeState !== "ready") return;
@@ -84,7 +87,7 @@ export default function Dashboard() {
         setProducts(prods);
         setTransactions(txs);
       } catch {
-        // Transient failure — the next tick or a manual reload will catch up.
+        // Transient failure - the next tick or a manual reload will catch up.
       }
     };
     const id = setInterval(refreshLive, 30_000);

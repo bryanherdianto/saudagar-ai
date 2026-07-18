@@ -3,7 +3,7 @@ import { rupiah } from "@/lib/format";
 import { Badge } from "./ui";
 import { SparkIcon } from "./icons";
 
-// The dashboard's signature "AI narrative" moment — a polarity-flipped dark
+// The dashboard's signature "AI narrative" moment - a polarity-flipped dark
 // card with lime-green text (DESIGN.md: hero-band-dark / card-feature-dark).
 export function InsightPanel({ insight }: { insight: InsightResponse }) {
   const { headline, narrative, recommendations, metrics, ai_enabled } = insight;

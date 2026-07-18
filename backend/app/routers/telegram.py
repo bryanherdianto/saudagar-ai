@@ -7,7 +7,7 @@ Telegram calls POST /webhooks/telegram for every update. This router:
   3. dedupes by `update_id` BEFORE any finance work (retry-safe),
   4. handles `/start link_<token>` account linking, and
   5. for normal messages, resolves the store and calls the SAME internal
-     `run_assistant()` the dashboard uses — never the /api/chat HTTP route.
+     `run_assistant()` the dashboard uses - never the /api/chat HTTP route.
 
 The endpoint is a sync path operation so FastAPI runs it in a worker thread;
 that keeps the blocking DB + LLM work off the event loop.
@@ -55,7 +55,7 @@ def _verify_secret(header_value: str | None) -> None:
     """
     expected = settings.telegram_webhook_secret.strip()
     if not expected:
-        logger.error("TELEGRAM_WEBHOOK_SECRET is not set — refusing webhook calls")
+        logger.error("TELEGRAM_WEBHOOK_SECRET is not set - refusing webhook calls")
         raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE)
     if not header_value or not secrets.compare_digest(header_value, expected):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
@@ -66,7 +66,7 @@ def _extract_text_message(update: dict) -> tuple[int, int, str, str] | None:
 
     Returns None for updates we don't handle yet (photos, edits, join/leave
     status events, callbacks, …) so the caller can ack them with 200 and move
-    on — Telegram must get a 200 or it keeps retrying.
+    on - Telegram must get a 200 or it keeps retrying.
     """
     update_id = update.get("update_id")
     message = update.get("message")
@@ -93,7 +93,7 @@ def telegram_webhook(
 
     extracted = _extract_text_message(update)
     if extracted is None:
-        # Unsupported update type — acknowledge so Telegram stops retrying.
+        # Unsupported update type - acknowledge so Telegram stops retrying.
         return {"ok": True, "ignored": True}
     update_id, chat_id, text, username = extracted
 
@@ -132,7 +132,7 @@ def telegram_webhook(
         return {"ok": True}
 
     # Load the store's recent Telegram exchanges as context (kept separate
-    # from the dashboard's browser-held history — see ConversationMessage).
+    # from the dashboard's browser-held history - see ConversationMessage).
     history = telegram_service.get_history(session, store_id)
     try:
         reply, _actions, _ai_enabled = run_assistant(

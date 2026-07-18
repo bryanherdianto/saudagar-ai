@@ -2,7 +2,7 @@
 
 These run behind Clerk auth (`get_ctx`), so the backend knows exactly which
 user + store is creating a Telegram link. No Telegram credentials are ever
-entered on the website — the merchant only taps a deep link.
+entered on the website - the merchant only taps a deep link.
 """
 
 from __future__ import annotations

@@ -45,7 +45,7 @@ export default function Home() {
     <div className="min-h-screen">
       <SiteHeader />
 
-      {/* Hero — polarity-flipped dark band, mirrors InsightPanel */}
+      {/* Hero - polarity-flipped dark band, mirrors InsightPanel */}
       <section className="relative overflow-hidden bg-ink text-primary">
         <HeroVisual />
         <div className="relative z-10 mx-auto max-w-300 px-6 py-20 sm:py-28">
@@ -108,7 +108,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Cara kerja — numbered, mirrors InsightPanel recommendation list */}
+      {/* Cara kerja - numbered, mirrors InsightPanel recommendation list */}
       <section className="bg-canvas-soft">
         <div className="mx-auto max-w-300 px-6 py-16">
           <div className="mb-8">
@@ -140,7 +140,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Closing CTA — dark band */}
+      {/* Closing CTA - dark band */}
       <section className="bg-ink text-primary">
         <div className="mx-auto max-w-300 px-6 py-16">
           <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">

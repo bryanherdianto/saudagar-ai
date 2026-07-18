@@ -15,7 +15,7 @@ const SUGGESTIONS = [
 
 type Bubble = ChatMessage & { actions?: string[] };
 
-// The "karyawan digital" chat — the WhatsApp-bot brain, in the dashboard.
+// The "karyawan digital" chat - the WhatsApp-bot brain, in the dashboard.
 export function ChatAssistant({ onMutate }: { onMutate?: () => void }) {
   const [messages, setMessages] = useState<Bubble[]>([
     {
@@ -47,7 +47,7 @@ export function ChatAssistant({ onMutate }: { onMutate?: () => void }) {
         { role: "assistant", content: res.reply, actions: res.actions },
       ]);
       if (res.actions.length > 0) onMutate?.();
-    } catch (err) {
+    } catch {
       setMessages((m) => [
         ...m,
         {

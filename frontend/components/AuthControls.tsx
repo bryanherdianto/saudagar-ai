@@ -3,7 +3,7 @@
 import { SignInButton, SignUpButton, Show, UserButton } from "@clerk/nextjs";
 
 // Client-side auth controls for the site header. Shows sign-in/sign-up buttons
-// when signed out, and a user button when signed in — following the Clerk
+// when signed out, and a user button when signed in - following the Clerk
 // pattern from the setup guide.
 export function AuthControls() {
   return (

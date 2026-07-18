@@ -5,7 +5,7 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 type ButtonVariant = "primary" | "secondary" | "tertiary" | "dark";
 
 const buttonStyles: Record<ButtonVariant, string> = {
-  // Lime-green CTA pill — the brand's conversion signature.
+  // Lime-green CTA pill - the brand's conversion signature.
   primary:
     "bg-primary text-on-primary hover:bg-primary-active disabled:opacity-50",
   secondary:

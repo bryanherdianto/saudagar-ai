@@ -97,7 +97,7 @@ export function StoreOnboarding({
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={3}
-            placeholder="Buka 08.00–21.00, selalu tawarkan es teh…"
+            placeholder="Buka 08.00-21.00, selalu tawarkan es teh…"
             className="w-full rounded-md border border-ink/20 bg-canvas px-4 py-3 text-sm outline-none focus:border-ink"
           />
         </Field>

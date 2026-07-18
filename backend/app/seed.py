@@ -5,7 +5,7 @@ Run once on startup only when:
   - the bootstrap user has no store yet.
 
 When auth is enabled (CLERK_ISSUER set), seeding per-user is left to an
-explicit onboarding endpoint — we never auto-create stores for real users.
+explicit onboarding endpoint - we never auto-create stores for real users.
 """
 
 from __future__ import annotations
@@ -46,7 +46,7 @@ DEMO_TX = [
 def seed_if_empty() -> None:
     """Seed the demo store for the bootstrap user (demo mode only)."""
     if settings.auth_enabled:
-        # Never auto-seed real users — they onboard through the API.
+        # Never auto-seed real users - they onboard through the API.
         return
 
     with Session(engine) as session:
@@ -70,7 +70,7 @@ def seed_if_empty() -> None:
             currency="IDR",
             default_language="id",
             notes=(
-                "Buka 08.00–21.00. Menu andalan nasi goreng dan mie goreng. "
+                "Buka 08.00-21.00. Menu andalan nasi goreng dan mie goreng. "
                 "Selalu tawarkan es teh manis untuk setiap pembelian makanan. "
                 "Tidak melayani pengantaran di atas radius 5 km."
             ),

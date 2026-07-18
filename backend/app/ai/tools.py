@@ -1,7 +1,7 @@
 """MCP-style tools that give the AI agent real-time access to store data.
 
 Following the Model Context Protocol philosophy, the LLM never touches the
-database directly — it can only act through this small, audited set of tools.
+database directly - it can only act through this small, audited set of tools.
 Each tool is bound to a live SQLModel `Session` and a `store_id` via a
 closure and returns a plain string the model can read back.
 
