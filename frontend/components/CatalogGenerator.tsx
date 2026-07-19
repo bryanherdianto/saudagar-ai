@@ -57,7 +57,7 @@ export function CatalogGenerator() {
   }
 
   return (
-    <div className="rounded-xl bg-canvas p-6">
+    <div className="rounded-xl bg-canvas p-3 sm:p-6">
       <div className="mb-4 flex items-center gap-2">
         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-pale text-ink">
           <TagIcon className="h-5 w-5" />
@@ -67,7 +67,7 @@ export function CatalogGenerator() {
             Katalog Multi-Bahasa
           </p>
           <p className="text-xs text-mute pt-1">
-            Deskripsi produk siap tempel ke marketplace
+            Deskripsi produk buat marketplace
           </p>
         </div>
       </div>

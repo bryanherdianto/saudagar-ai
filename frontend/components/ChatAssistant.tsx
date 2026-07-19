@@ -15,7 +15,7 @@ const SUGGESTIONS = [
 
 type Bubble = ChatMessage & { actions?: string[] };
 
-// The "karyawan digital" chat - the WhatsApp-bot brain, in the dashboard.
+// The "karyawan digital" chat
 export function ChatAssistant({ onMutate }: { onMutate?: () => void }) {
   const [messages, setMessages] = useState<Bubble[]>([
     {
@@ -71,7 +71,7 @@ export function ChatAssistant({ onMutate }: { onMutate?: () => void }) {
 
   return (
     <div className="flex h-full min-h-130 flex-col rounded-xl bg-canvas">
-      <div className="flex items-center gap-3 border-b border-canvas-soft px-6 py-4">
+      <div className="flex items-center gap-3 border-b border-canvas-soft px-3 sm:px-6 py-4">
         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-on-primary">
           <ChatIcon className="h-5 w-5" />
         </span>
@@ -80,14 +80,14 @@ export function ChatAssistant({ onMutate }: { onMutate?: () => void }) {
             Asisten Saudagar
           </p>
           <p className="text-xs text-mute pt-1">
-            Catat keuangan & stok lewat obrolan
+            Catat keuangan & stok dari obrolan
           </p>
         </div>
       </div>
 
       <div
         ref={scrollRef}
-        className="scroll-slim flex-1 space-y-4 overflow-y-auto px-6 py-5"
+        className="scroll-slim flex-1 space-y-4 overflow-y-auto px-3 sm:px-6 py-5"
       >
         {messages.map((m, i) => (
           <div
@@ -132,7 +132,7 @@ export function ChatAssistant({ onMutate }: { onMutate?: () => void }) {
         )}
       </div>
 
-      <div className="border-t border-canvas-soft px-6 py-4">
+      <div className="border-t border-canvas-soft px-3 sm:px-6 py-4">
         <div className="mb-3 flex flex-wrap gap-2">
           {SUGGESTIONS.map((s) => (
             <button
@@ -156,7 +156,7 @@ export function ChatAssistant({ onMutate }: { onMutate?: () => void }) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Tulis pesan..."
-            className="flex-1 rounded-md border border-ink/20 bg-canvas px-4 py-3 text-sm text-ink outline-none placeholder:text-mute focus:border-ink"
+            className="min-w-0 flex-1 rounded-md border border-ink/20 bg-canvas px-4 py-3 text-sm text-ink outline-none placeholder:text-mute focus:border-ink"
           />
           <Button type="submit" disabled={loading || !input.trim()}>
             <SendIcon className="h-4 w-4" />

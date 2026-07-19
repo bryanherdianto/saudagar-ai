@@ -1,21 +1,36 @@
 # Saudagar.ai (Sistem Asisten Usaha Dagang Pintar)
 
+
+
+<p align="center">
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
+  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" />
+  <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" />
+  <img src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white" />
+  <img src="https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white" />
+  <img src="https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white" />
+  <img src="https://img.shields.io/badge/Clerk-6C47FF?style=for-the-badge&logo=clerk&logoColor=white" />
+  <img src="https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white" />
+  <img src="https://img.shields.io/badge/Puppeteer-40B5A4?style=for-the-badge&logo=puppeteer&logoColor=white" />
+  <img src="https://img.shields.io/badge/Google_Gemini-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white" />
+</p>
+
+---
+## Overivew
+
 Ekosistem **asisten virtual + dashboard analitik** untuk UMKM Indonesia. Alih-alih
 memaksa pedagang mempelajari aplikasi kasir yang rumit, Saudagar.ai bertindak
 sebagai **"karyawan digital"** yang bisa diajak mengobrol - mencatat keuangan &
 stok dari bahasa sehari-hari, melayani pelanggan otomatis, dan menerjemahkan
 data menjadi insight yang mudah dipahami.
 
-<p align="center"><em>Next.js · FastAPI · LangChain · Google Gemini (RAG + MCP-style tools)</em></p>
-
----
 
 ## Fitur (MVP)
 
 | Fitur                               | Deskripsi                                                                                                                               |
 | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| **Pencatatan via Natural Language** | Kirim "laku 15 porsi nasi goreng, beli telur 2 kg 55 ribu" → AI mengekstrak intent, mengategorikan, dan memperbarui database real-time. |
-| **Auto-CS & AI Sales Engine**       | AI menjawab calon pembeli, mengecek stok dari katalog, dan melakukan up-selling relevan.                                                |
+| **Pencatatan via Natural Language** | Kirim "laku 15 porsi nasi goreng, beli telur 2 kg 55 ribu" → AI mengekstrak intent, mengategorikan, dan memperbarui database real-time. |                                        |
 | **Narasi Analitik & Rekomendasi**   | Dashboard membaca data dan menuliskannya sebagai insight sederhana + saran bisnis.                                                      |
 | **Katalog Multi-Bahasa**            | Masukkan nama produk → AI membuat copywriting menarik dalam banyak bahasa, siap tempel ke marketplace.                                  |
 

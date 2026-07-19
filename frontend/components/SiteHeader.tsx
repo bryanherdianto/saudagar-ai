@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AuthControls } from "./AuthControls";
+import { MobileNav } from "./MobileNav";
 
 const NAV = [
   { href: "/", label: "Beranda" },
@@ -8,8 +9,7 @@ const NAV = [
   { href: "/privacy-policy", label: "Privasi" },
 ];
 
-// Marketing top nav - sticky, canvas-backed, mirrors the dashboard header
-// treatment (border-b + backdrop-blur) so the whole site feels cohesive.
+// Marketing top nav
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-ink/10 bg-canvas/90 backdrop-blur">
@@ -22,7 +22,7 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        <nav className="flex items-center gap-6">
+        <nav className="hidden items-center gap-6 md:flex">
           {NAV.map((item) => (
             <Link
               key={item.href}
@@ -34,6 +34,8 @@ export function SiteHeader() {
           ))}
           <AuthControls />
         </nav>
+
+        <MobileNav items={NAV} />
       </div>
     </header>
   );

@@ -12,8 +12,8 @@ export function ProductsTable({ products }: { products: Product[] }) {
   }
 
   return (
-    <div className="overflow-hidden rounded-xl bg-canvas">
-      <table className="w-full text-left text-sm">
+    <div className="overflow-x-auto rounded-xl bg-canvas">
+      <table className="w-full min-w-120 text-left text-sm">
         <thead className="sticky top-0 bg-canvas-soft text-xs uppercase tracking-wide text-mute">
           <tr>
             <th className="px-5 py-3 font-semibold">Produk</th>

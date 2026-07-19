@@ -2,11 +2,10 @@
 
 // Telegram account-linking card.
 //
-// Flow: [Hubungkan Telegram] → backend mints a short-lived deep link →
-// open t.me in a new tab → user taps Start in Telegram → the bot's webhook
-// binds chat_id → store_id → this card polls /status until it flips to
-// connected (or the link expires). No Telegram credentials ever touch the
-// website; the deep-link token is the only secret and it dies in minutes.
+// Flow: [Hubungkan Telegram] -> backend mints a short-lived deep link ->
+// open t.me in a new tab -> user taps Start in Telegram -> the bot's webhook
+// binds chat_id -> store_id -> this card polls /status until it flips to
+// connected (or the link expires).
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
@@ -61,7 +60,7 @@ export function TelegramConnection() {
       if (s) {
         setPhase(s.connected ? "connected" : "idle");
       } else {
-        // Status check failed (offline, 401, …) - fall back to idle instead
+        // Status check failed (offline atau 401) - fall back to idle instead
         // of spinning forever; `refresh` already handled the 503 case.
         setPhase((p) => (p === "unavailable" ? p : "idle"));
       }
@@ -101,7 +100,7 @@ export function TelegramConnection() {
       if (msg.includes("503")) {
         setPhase("unavailable");
       } else {
-        setError("Gagal membuat tautan. Coba lagi sebentar lagi.");
+        setError("Gagal membuat link. Coba lagi sebentar lagi.");
       }
     }
   }, [refresh, stopPolling]);
@@ -110,7 +109,11 @@ export function TelegramConnection() {
     setError(null);
     try {
       await api.telegramDisconnect();
-      setStatus({ connected: false, telegram_username: null, connected_at: null });
+      setStatus({
+        connected: false,
+        telegram_username: null,
+        connected_at: null,
+      });
       setPhase("idle");
     } catch {
       setError("Gagal memutuskan koneksi. Coba lagi.");
@@ -146,9 +149,7 @@ export function TelegramConnection() {
             Hubungkan akun Telegram untuk mencatat penjualan, mengecek stok, dan
             bertanya ke asisten langsung dari chat.
           </p>
-          <Button onClick={connect}>
-            Hubungkan Telegram
-          </Button>
+          <Button onClick={connect}>Hubungkan Telegram</Button>
         </div>
       )}
 
@@ -158,7 +159,9 @@ export function TelegramConnection() {
             Buka Telegram lalu tekan <strong>Start</strong> untuk konfirmasi.
             Halaman ini akan diperbarui otomatis.
           </p>
-          <p className="text-xs text-mute">Menunggu konfirmasi dari Telegram…</p>
+          <p className="text-xs text-mute">
+            Menunggu konfirmasi dari Telegram…
+          </p>
         </div>
       )}
 
@@ -194,10 +197,7 @@ function CardHeader() {
       <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-pale text-ink">
         <TelegramIcon className="h-5 w-5" />
       </span>
-      <div>
-        <h3 className="font-display text-lg text-ink">Telegram</h3>
-        <p className="text-xs text-mute">Asisten toko di aplikasi chat</p>
-      </div>
+      <h3 className="font-display text-lg text-ink">Telegram</h3>
     </div>
   );
 }

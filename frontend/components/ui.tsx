@@ -53,7 +53,7 @@ export function Card({
   children: ReactNode;
 }) {
   return (
-    <div className={`rounded-xl p-6 ${cardTones[tone]} ${className}`}>
+    <div className={`rounded-xl p-3 sm:p-6 ${cardTones[tone]} ${className}`}>
       {children}
     </div>
   );

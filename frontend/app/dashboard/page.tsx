@@ -183,7 +183,7 @@ export default function Dashboard() {
             />
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               <CatalogGenerator />
-              <div className="rounded-xl bg-primary-pale p-7">
+              <div className="rounded-xl bg-primary-pale p-4 sm:p-7">
                 <h3 className="font-display text-2xl text-ink">
                   Jangkau pasar lebih luas
                 </h3>
@@ -222,7 +222,7 @@ export default function Dashboard() {
           {/* Integrasi */}
           <section id="integrasi" className="scroll-mt-20">
             <SectionTitle
-              eyebrow="Kanal Terhubung"
+              eyebrow="Aplikasi Terhubung"
               title="Integrasi"
             />
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
