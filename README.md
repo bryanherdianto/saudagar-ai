@@ -1,5 +1,6 @@
 # Saudagar.ai (Sistem Asisten Usaha Dagang Pintar)
 
+<img width="1200" height="400" alt="banner_saudagarai" src="https://github.com/user-attachments/assets/b4279e11-7e46-49c4-b16d-ccea8901d242" />
 
 
 <p align="center">
