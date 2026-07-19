@@ -21,6 +21,9 @@ export const metadata: Metadata = {
   title: "Saudagar.ai | Asisten Usaha Dagang Pintar",
   description:
     "Karyawan digital untuk UMKM: catat keuangan & stok lewat obrolan dan pahami bisnismu dengan insight AI.",
+  other: {
+    "dicoding:email": "bryan.herdianto17@gmail.com",
+  },
 };
 
 export default function RootLayout({
